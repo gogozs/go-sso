@@ -1,0 +1,70 @@
+common:
+  debug:           true
+  app_secret:     sfdsfdsfscc&234*21
+  access_log:      false
+  access_log_path:
+  error_log:       false
+  error_log_path:
+  info_log:        false
+  info_log_path:
+  sql_log:         false
+  template_path:
+
+  http_port:       8009
+  read_timeout:    30
+  write_timeout:   30
+  page_size:       100
+
+mysql:
+  dbtype: mysql
+  host: localhost
+  username: zs
+  password: zs
+  port: 3306
+  dbname: go_ops
+  prefix: ops
+
+pgsql:
+  dbtype: postgresql
+  host: 127.0.0.1
+  username: zs
+  password: zs
+  port: 3306
+  dbname: ops
+  prefix: ops
+
+
+promethues:
+  url: ""
+
+ops:
+  url: http://127.0.0.1:9000
+  token: e7f4519ec7cce3536258165dc262488eba3e7ad0
+  cmdburl: http://127.0.0.1:9000
+
+mongodb:
+  uri: mongodb://localhost:27017
+
+cache:
+  host: localhost:6379
+  password :
+  dbname: 4
+
+jwt:
+  SECRET: session
+  EXP:    3600
+  ALG:    HS256
+
+cokkie:
+  name: cokkie
+
+kafka:
+  host: localhost
+  port: 9092
+
+
+email:
+  host:
+  password:
+  user:
+  admin:
