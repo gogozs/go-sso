@@ -14,7 +14,7 @@ func InitRouter() *gin.Engine {
 	return r
 }
 
-func StartServer() {
+func StartServer() (*http.Server, error) {
 	router := InitRouter()
 	c := config.GetConfig().Common
 	server := &http.Server{
@@ -24,5 +24,6 @@ func StartServer() {
 		WriteTimeout:   c.WRITE_TIMEOUT,
 		MaxHeaderBytes: 1 << 20,
 	}
-	server.ListenAndServe()
+	err := server.ListenAndServe()
+	return server, err
 }
