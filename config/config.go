@@ -43,21 +43,13 @@ func GetConfig() *Config {
 }
 
 type CommonConfig struct {
-	DEBUG           bool
-	APP_SECRET      string
-	ACCESS_LOG      bool
-	ACCESS_LOG_PATH string
-	ERROR_LOG       bool
-	ERROR_LOG_PATH  string
-	INFO_LOG        bool
-	INFO_LOG_PATH   string
-	SQL_LOG         bool
-	TEMPLATE_PATH   string // 静态文件相对路径
+	AppSecret      string
+	TemplatePath string // 静态文件相对路径
 
-	HTTP_PORT     int
-	READ_TIMEOUT  time.Duration
-	WRITE_TIMEOUT time.Duration
-	PAGE_SIZE     int
+	HttpPort     int
+	ReadTimeout  time.Duration
+	WriteTimeout time.Duration
+	PageSize     int
 }
 
 // jwt

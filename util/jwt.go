@@ -2,11 +2,11 @@ package util
 
 import (
 	"github.com/dgrijalva/jwt-go"
-	"go-ops/pkg/settings"
+	"go-weixin/config"
 	"time"
 )
 
-var jwtSecret = settings.JwtSecret
+var jwtSecret = config.GetConfig().Common.AppSecret
 
 type Claims struct {
 	Username string `json:"username"`

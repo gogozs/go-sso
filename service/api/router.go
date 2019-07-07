@@ -8,20 +8,26 @@ import (
 	"net/http"
 )
 
+var router *gin.Engine
+
+func GetRouter() *gin.Engine {
+	return router
+}
+
 func InitRouter() *gin.Engine {
-	r := gin.Default()
-	r.Use(erroremail.ErrEmailWriter())
-	return r
+	router = gin.Default()
+	router.Use(erroremail.ErrEmailWriter())
+	return router
 }
 
 func StartServer() (*http.Server, error) {
 	router := InitRouter()
 	c := config.GetConfig().Common
 	server := &http.Server{
-		Addr:           fmt.Sprintf(":%d", c.HTTP_PORT),
+		Addr:           fmt.Sprintf(":%d", c.HttpPort),
 		Handler:        router,
-		ReadTimeout:    c.READ_TIMEOUT,
-		WriteTimeout:   c.WRITE_TIMEOUT,
+		ReadTimeout:    c.ReadTimeout,
+		WriteTimeout:   c.WriteTimeout,
 		MaxHeaderBytes: 1 << 20,
 	}
 	err := server.ListenAndServe()

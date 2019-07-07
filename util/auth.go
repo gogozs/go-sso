@@ -1,12 +1,11 @@
 package util
 
 import (
-	"go-ops/models"
-	"go-ops/models/users"
+	"go-weixin/service/models"
 	"golang.org/x/crypto/bcrypt"
 )
 
-func CreateUser(user users.User) error {
+func CreateUser(user models.User) error {
 	if user.Password != "" {
 		var err error
 		user.Password, err = GeneratePassword(user.Password)
@@ -35,7 +34,7 @@ func ComparePassword(userPwd, hashPwd string) error {
 }
 
 func CheckUser(username, password string) bool {
-	user, err := users.GetUser(username)
+	user, err := models.GetUser(username)
 	if err != nil {
 		return false
 	} else {

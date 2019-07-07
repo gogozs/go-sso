@@ -1,19 +1,12 @@
 common:
   debug:           true
-  app_secret:     sfdsfdsfscc&234*21
-  access_log:      false
-  access_log_path:
-  error_log:       false
-  error_log_path:
-  info_log:        false
-  info_log_path:
-  sql_log:         false
+  AppSecret:     sfdsfdsfscc&234*21
   template_path:
 
-  http_port:       8009
-  read_timeout:    30
-  write_timeout:   30
-  page_size:       100
+  HttpPort:       8009
+  ReadTimeout:    30
+  WriteTimeout:   30
+  PageSize:       100
 
 mysql:
   dbtype: mysql
