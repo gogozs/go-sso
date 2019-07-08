@@ -1,13 +1,14 @@
 package main
 
-import "go-weixin/service/api"
+import (
+	"go-weixin/pkg/log"
+	"go-weixin/service/api"
+)
 
 func main() {
-	//server := api.StartServer()
-	//err := server.ListenAndServe()
-	//if err != nil {
-	//	log.Error(err)
-	//}
-	router := api.InitRouter()
-	router.Run("localhost:8003")
+	server := api.StartServer()
+	err := server.ListenAndServe()
+	if err != nil {
+		log.Error(err)
+	}
 }

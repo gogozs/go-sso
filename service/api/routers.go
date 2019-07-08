@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"go-weixin/config"
-	"go-weixin/pkg/middlewares/erroremail"
 	"net/http"
 )
 
@@ -19,7 +18,7 @@ func GetRouter() *gin.Engine {
 
 func InitRouter() *gin.Engine {
 	router = gin.Default()
-	router.Use(erroremail.ErrEmailWriter())
+	//router.Use(erroremail.ErrEmailWriter())
 	AuthRouterInit()
 	return router
 }
