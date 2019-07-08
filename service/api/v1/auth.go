@@ -4,14 +4,13 @@ import (
 	"github.com/gin-gonic/gin"
 	"go-weixin/pkg/apierror"
 	"go-weixin/pkg/log"
-	"go-weixin/service/api"
 	"go-weixin/service/models"
 	"go-weixin/util"
 )
 
 // get token login
 func ViewLogin(c *gin.Context) {
-	appG := api.Gin{C: c}
+	appG := Gin{C: c}
 	var user models.User
 	err := c.BindJSON(user)
 	if err != nil {
@@ -33,7 +32,7 @@ func ViewLogin(c *gin.Context) {
 
 
 func ViewRegister(c *gin.Context) {
-	appG := api.Gin{C: c}
+	appG := Gin{C: c}
 	var user models.User
 	err := c.BindJSON(user)
 	if err != nil {

@@ -3,7 +3,7 @@ common:
   AppSecret:     sfdsfdsfscc&234*21
   template_path:
 
-  HttpPort:       8009
+  HttpPort:       8008
   ReadTimeout:    30
   WriteTimeout:   30
   PageSize:       100
@@ -27,16 +27,6 @@ pgsql:
   prefix: ops
 
 
-promethues:
-  url: ""
-
-ops:
-  url: http://127.0.0.1:9000
-  token: e7f4519ec7cce3536258165dc262488eba3e7ad0
-  cmdburl: http://127.0.0.1:9000
-
-mongodb:
-  uri: mongodb://localhost:27017
 
 cache:
   host: localhost:6379
@@ -50,10 +40,6 @@ jwt:
 
 cokkie:
   name: cokkie
-
-kafka:
-  host: localhost
-  port: 9092
 
 
 email:

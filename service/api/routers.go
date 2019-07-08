@@ -20,10 +20,11 @@ func GetRouter() *gin.Engine {
 func InitRouter() *gin.Engine {
 	router = gin.Default()
 	router.Use(erroremail.ErrEmailWriter())
+	AuthRouterInit()
 	return router
 }
 
-func StartServer() (*http.Server, error) {
+func StartServer() *http.Server {
 	router := InitRouter()
 	c := config.GetConfig().Common
 	server := &http.Server{
@@ -33,6 +34,5 @@ func StartServer() (*http.Server, error) {
 		WriteTimeout:   c.WriteTimeout,
 		MaxHeaderBytes: 1 << 20,
 	}
-	err := server.ListenAndServe()
-	return server, err
+	return server
 }

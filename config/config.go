@@ -5,6 +5,7 @@ import (
 	"github.com/spf13/viper"
 	"go-weixin/pkg/log"
 	"os"
+	"path"
 	"path/filepath"
 	"strings"
 	"time"
@@ -83,11 +84,10 @@ func getCurrentDirectory() string {
 
 
 func init() {
-	//wd := os.Getenv("GOOPS_WORK_DIR")
-	//confPath := path.Join(wd, "config/")
-
-	fmt.Println(os.Getwd())
-	confPath := "config/"
+	// 需要配置项目根目录的环境变量，方便执行test
+	wd := os.Getenv("GO_WEIXIN_WORKDIR")
+	confPath := path.Join(wd, "config/")
+	fmt.Println("配置目录: ", confPath)
 	ginEnv := os.Getenv("gin_env")
 	if ginEnv == "" {
 		ginEnv = "local"

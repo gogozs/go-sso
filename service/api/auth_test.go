@@ -1,7 +1,6 @@
-package v1
+package api
 
 import (
-	"go-weixin/service/api"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -10,7 +9,7 @@ import (
 
 
 func TestViewLogin(t *testing.T) {
-	router := api.InitRouter()
+	router := InitRouter()
 	// 获取一个请求实例
 	w := httptest.NewRecorder()
 	// 构造请求
@@ -20,7 +19,7 @@ func TestViewLogin(t *testing.T) {
 	router.ServeHTTP(w, req)
 	// 断言
 
-	assert.Equal(t, 200, w.Code)
+	assert.Equal(t, 400, w.Code)
 }
 
 
