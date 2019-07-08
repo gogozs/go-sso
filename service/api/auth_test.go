@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -17,8 +18,7 @@ func TestViewLogin(t *testing.T) {
 	req, _ := http.NewRequest("POST", "/api/v1/auth/login/", nil)
 	// 执行
 	router.ServeHTTP(w, req)
-	// 断言
-
+	fmt.Println(w.Body)
 	assert.Equal(t, 400, w.Code)
 }
 

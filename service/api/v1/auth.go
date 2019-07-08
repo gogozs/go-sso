@@ -15,17 +15,17 @@ func ViewLogin(c *gin.Context) {
 	err := c.BindJSON(user)
 	if err != nil {
 		log.Error(err)
-		appG.FailResponse(apierror.ERROR_AUTH)
+		appG.FailResponse(apierror.INVALID_PARAMS)
 	} else {
 		if r := util.CheckUser(user.Username, user.Password); r {
 			token, err := util.GenerateToken(user.Username, user.Password)
 			if err != nil {
-				appG.FailResponse(apierror.ERROR_AUTH)
+				appG.FailResponse(apierror.INVALID_PARAMS)
 			} else {
 				appG.SuccessResponse(gin.H{"token": token})
 			}
 		} else {
-			appG.FailResponse(apierror.ERROR_AUTH)
+			appG.FailResponse(apierror.INVALID_PARAMS)
 		}
 	}
 }
