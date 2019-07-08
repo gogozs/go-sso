@@ -15,7 +15,7 @@ func TestViewLogin(t *testing.T) {
 	w := httptest.NewRecorder()
 	// 构造请求
 	// 参数依次是 请求方法、路由、参数
-	req, _ := http.NewRequest("GET", "api/v1/auth/login/", nil)
+	req, _ := http.NewRequest("POST", "/api/v1/auth/login/", nil)
 	// 执行
 	router.ServeHTTP(w, req)
 	// 断言

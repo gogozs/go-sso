@@ -4,6 +4,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"go-weixin/pkg/apierror"
 	"go-weixin/pkg/middlewares/auth/drivers"
+	"go-weixin/service/api"
+	"go-weixin/service/models"
 	"net/http"
 )
 
@@ -19,7 +21,7 @@ var driverList = map[string]func() Auth{
 type Auth interface {
 	Check(c *gin.Context) bool
 	User(c *gin.Context) interface{}
-	Login(http *http.Request, w http.ResponseWriter, user *users.User) interface{}
+	Login(http *http.Request, w http.ResponseWriter, user *models.User) interface{}
 	Logout(http *http.Request, w http.ResponseWriter) bool
 }
 
@@ -45,7 +47,7 @@ func AuthMiddleware(authList []string) gin.HandlerFunc {
 			}
 		}
 		if !loginSuccess {
-			appG := app.Gin{C: c}
+			appG := api.Gin{C: c}
 			c.Header("WWW-Authenticate", "Token realm=\"Authorization Required\"")
 			appG.Response(http.StatusUnauthorized, apierror.UNAUTHORIZED, gin.H{"msg": apierror.GetMsg(apierror.UNAUTHORIZED)})
 			c.Abort()

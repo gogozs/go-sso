@@ -3,9 +3,9 @@ package permission
 import (
 	"github.com/casbin/casbin"
 	"github.com/gin-gonic/gin"
-	"go-weixin/models/users"
 	"go-weixin/pkg/apierror"
-	"go-weixin/pkg/app"
+	"go-weixin/service/api"
+	"go-weixin/service/models"
 )
 
 // NewAuthorizer returns the authorizer, uses a Casbin enforcer as input
@@ -25,7 +25,7 @@ type PermissionAuthorizer struct {
 }
 
 func (a *PermissionAuthorizer) GetUserName(c *gin.Context) string {
-	user:= c.MustGet("User").(users.User)
+	user:= c.MustGet("User").(models.User)
 	return user.Role.String
 }
 
@@ -38,7 +38,7 @@ func (a *PermissionAuthorizer) CheckPermission(c *gin.Context) bool {
 
 // RequirePermission returns the 403 Forbidden to the client
 func (a *PermissionAuthorizer) RequirePermission(c *gin.Context) {
-	c.JSON(403, app.Response{
+	c.JSON(403, api.Response{
 		Code: apierror.ERROR_AUTH,
 		Msg:  apierror.GetMsg(apierror.ERROR_AUTH),
 	})

@@ -11,6 +11,9 @@ import (
 var router *gin.Engine
 
 func GetRouter() *gin.Engine {
+	if router == nil {
+		return InitRouter()
+	}
 	return router
 }
 

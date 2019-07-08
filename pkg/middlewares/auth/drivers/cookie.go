@@ -4,11 +4,11 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/sessions"
 	"go-weixin/config"
-	"go-weixin/models/users"
+	"go-weixin/service/models"
 	"net/http"
 )
 
-var store = sessions.NewCookieStore([]byte(config.GetConfig().Common.APP_SECRET))
+var store = sessions.NewCookieStore([]byte(config.GetConfig().Common.AppSecret))
 
 type cookieAuthManager struct {
 	name string
@@ -47,7 +47,7 @@ func (cookie *cookieAuthManager) User(c *gin.Context) interface{} {
 	return session.Values
 }
 
-func (cookie *cookieAuthManager) Login(http *http.Request, w http.ResponseWriter, user *users.User) interface{} {
+func (cookie *cookieAuthManager) Login(http *http.Request, w http.ResponseWriter, user *models.User) interface{} {
 	// write cookie
 	session, err := store.Get(http, cookie.name)
 	if err != nil {

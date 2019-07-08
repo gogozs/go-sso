@@ -19,7 +19,7 @@ func ErrEmailWriter() gin.HandlerFunc {
 		defer func() {
 			if err := recover(); err != nil {
 				httprequest, _ := httputil.DumpRequest(c.Request, false)
-				errMsg := fmt.Sprintf("[Recovery] %s panic recovered:\n%s\n%s\n%s%s", timeFormat(time.Now()), string(httprequest), err)
+				errMsg := fmt.Sprintf("[Recovery] %s panic recovered:\n%s\n%s", timeFormat(time.Now()), string(httprequest), err)
 				email.SendEmail(nil, "request error", errMsg, "text")
 				c.AbortWithStatus(http.StatusInternalServerError)
 			}

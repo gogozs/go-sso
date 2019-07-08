@@ -5,6 +5,7 @@ import (
 	"go-weixin/config"
 	"go-weixin/pkg/apierror"
 	"go-weixin/pkg/log"
+	"go-weixin/service/models"
 	"go-weixin/util"
 	"net/http"
 	"strings"
@@ -42,7 +43,7 @@ func (jwtAuth *jwtAuthManager) Check(c *gin.Context) bool {
 		return false
 	}
 	username := clamis.Username
-	user, err := users.GetUser(username)
+	user, err := models.GetUser(username)
 	if err != nil {
 		log.Info(apierror.GetMsg(apierror.ERROR_AUTH))
 		return false
@@ -71,7 +72,7 @@ func (jwtAuth *jwtAuthManager) User(c *gin.Context) interface{} {
 			return nil
 		}
 		username := clamis.Username
-		user, err := users.GetUser(username)
+		user, err := models.GetUser(username)
 		if err != nil {
 			log.Info(apierror.GetMsg(apierror.ERROR_AUTH))
 			panic(err)
@@ -82,7 +83,7 @@ func (jwtAuth *jwtAuthManager) User(c *gin.Context) interface{} {
 	}
 }
 
-func (jwtAuth *jwtAuthManager) Login(http *http.Request, w http.ResponseWriter, user *users.User) interface{} {
+func (jwtAuth *jwtAuthManager) Login(http *http.Request, w http.ResponseWriter, user *models.User) interface{} {
 	token, _ := util.GenerateToken(user.Username, user.Password)
 	return token
 }

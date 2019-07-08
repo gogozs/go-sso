@@ -6,7 +6,7 @@ import (
 	"github.com/casbin/casbin"
 	_ "github.com/go-sql-driver/mysql"
 	"go-weixin/config"
-	"go-weixin/models"
+	"go-weixin/service/models"
 	"log"
 	"os"
 )

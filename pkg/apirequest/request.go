@@ -3,7 +3,6 @@ package apirequest
 import (
 	"bytes"
 	"fmt"
-	"go-weixin/config"
 	"go-weixin/pkg/json"
 	"io"
 	"io/ioutil"
@@ -50,10 +49,7 @@ AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.103 Safari/537.36`)
 	}
 }
 
-func Post(url string, params map[string]string, body interface{}) *http.Response {
-	c := config.GetConfig()
-	baseUrl := c.Ops.Url
-	token := c.Ops.Token
+func Post(url, baseUrl, token string, params map[string]string, body interface{}) *http.Response {
 	b, err := json.Marshal(body)
 	if err != nil {
 		log.Fatal(err)

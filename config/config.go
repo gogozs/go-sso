@@ -3,8 +3,10 @@ package config
 import (
 	"fmt"
 	"github.com/spf13/viper"
+	"go-weixin/pkg/log"
 	"os"
-	"path"
+	"path/filepath"
+	"strings"
 	"time"
 )
 
@@ -71,9 +73,21 @@ type EmailConfig struct {
 	Admin    string
 }
 
+func getCurrentDirectory() string {
+	dir, err := filepath.Abs(filepath.Dir(os.Args[0]))
+	if err != nil {
+		log.Error(err)
+	}
+	return strings.Replace(dir, "\\", "/", -1)
+}
+
+
 func init() {
-	wd := os.Getenv("GOOPS_WORK_DIR")
-	confPath := path.Join(wd, "config/")
+	//wd := os.Getenv("GOOPS_WORK_DIR")
+	//confPath := path.Join(wd, "config/")
+
+	fmt.Println(os.Getwd())
+	confPath := "config/"
 	ginEnv := os.Getenv("gin_env")
 	if ginEnv == "" {
 		ginEnv = "local"
