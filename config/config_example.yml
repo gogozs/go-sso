@@ -1,6 +1,6 @@
 common:
   debug:           true
-  AppSecret:     sfdsfdsfscc&234*21
+  AppSecret:     sdfsfdsfdscmasndf2weaqwerm
   template_path:
 
   HttpPort:       8008
@@ -14,18 +14,18 @@ mysql:
   username: zs
   password: zs
   port: 3306
-  dbname: go_ops
-  prefix: ops
+  dbname: weixin
+  prefix: go_
 
-pgsql:
-  dbtype: postgresql
-  host: 127.0.0.1
+
+testmysql:
+  dbtype: mysql
+  host: localhost
   username: zs
   password: zs
   port: 3306
-  dbname: ops
-  prefix: ops
-
+  dbname: test_weixin
+  prefix: test_
 
 
 cache:

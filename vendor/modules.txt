@@ -61,6 +61,8 @@ github.com/hashicorp/hcl/hcl/scanner
 github.com/hashicorp/hcl/hcl/strconv
 github.com/hashicorp/hcl/json/scanner
 github.com/hashicorp/hcl/json/token
+# github.com/inconshreveable/mousetrap v1.0.0
+github.com/inconshreveable/mousetrap
 # github.com/jinzhu/gorm v1.9.10
 github.com/jinzhu/gorm
 github.com/jinzhu/gorm/dialects/mysql
@@ -80,6 +82,8 @@ github.com/magiconair/properties
 github.com/mattn/go-isatty
 # github.com/memcachier/mc v2.0.1+incompatible
 github.com/memcachier/mc
+# github.com/mitchellh/go-homedir v1.1.0
+github.com/mitchellh/go-homedir
 # github.com/mitchellh/mapstructure v1.1.2
 github.com/mitchellh/mapstructure
 # github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd
@@ -99,6 +103,8 @@ github.com/spf13/afero
 github.com/spf13/afero/mem
 # github.com/spf13/cast v1.3.0
 github.com/spf13/cast
+# github.com/spf13/cobra v0.0.5
+github.com/spf13/cobra
 # github.com/spf13/jwalterweatherman v1.0.0
 github.com/spf13/jwalterweatherman
 # github.com/spf13/pflag v1.0.3
@@ -107,7 +113,7 @@ github.com/spf13/pflag
 github.com/spf13/viper
 # github.com/stretchr/testify v1.3.1-0.20190311161405-34c6fa2dc709
 github.com/stretchr/testify/assert
-# github.com/ugorji/go/codec v0.0.0-20181022190402-e5e69e061d4f
+# github.com/ugorji/go/codec v0.0.0-20181204163529-d75b2dcb6bc8
 github.com/ugorji/go/codec
 # golang.org/x/crypto v0.0.0-20190701094942-4def268fd1a4
 golang.org/x/crypto/bcrypt

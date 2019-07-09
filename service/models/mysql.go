@@ -4,12 +4,23 @@ import (
 	"fmt"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
+	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"go-weixin/config"
 	"go-weixin/pkg/log"
 	"time"
 )
 
-var DB *gorm.DB
+var (
+	DB                                                *gorm.DB
+	err                                               error
+	dbType, dbName, user, password, host, tablePrefix string
+	c                                                 *config.Config
+)
+
+func Migrate() {
+	DB.AutoMigrate(&User{})
+	DB.AutoMigrate(&UserProfile{})
+}
 
 type BaseModel struct {
 	ID        uint      `json:"id" gorm:"primary_key" gorm:"AUTO_INCREMENT"`
@@ -17,15 +28,13 @@ type BaseModel struct {
 	UpdatedAt time.Time `json:"updated_at"`
 }
 
-// 数据库初始化
 func init() {
-	c := config.GetConfig()
-	var (
-		err                                               error
-		dbType, dbName, user, password, host, tablePrefix string
-	)
-	mysql := c.MySQL
+	c = config.GetConfig()
+	Init(c.MySQL)
+}
 
+// 数据库初始化
+func Init(mysql config.MySQLConfig) {
 	dbType = mysql.Dbtype
 	dbName = mysql.Dbname
 	user = mysql.Username
@@ -49,7 +58,9 @@ func init() {
 		}
 		return tablePrefix + defaultTableName
 	}
-
+	if c.Common.Debug {
+		DB.LogMode(true) // 开启 sql 日志
+	}
 	DB.SingularTable(true) // 创建table名单数
 	DB.DB().SetMaxIdleConns(10)
 	DB.DB().SetMaxOpenConns(100)

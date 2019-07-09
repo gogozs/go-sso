@@ -13,6 +13,7 @@ import (
 
 type Config struct {
 	MySQL  MySQLConfig
+	TestMysql TestMysqlConfig
 	Cache  CacheConfig
 	Jwt    JwtConfig
 	Cookie CookieConfig
@@ -30,6 +31,17 @@ type MySQLConfig struct {
 	Prefix   string
 }
 
+type TestMysqlConfig struct {
+	Host     string
+	Username string
+	Password string
+	Port     string
+	Dbname   string
+	Dbtype   string
+	Prefix   string
+}
+
+
 type CacheConfig struct {
 	Host        string
 	Password    string
@@ -46,7 +58,8 @@ func GetConfig() *Config {
 }
 
 type CommonConfig struct {
-	AppSecret      string
+	Debug        bool
+	AppSecret    string
 	TemplatePath string // 静态文件相对路径
 
 	HttpPort     int
@@ -82,11 +95,15 @@ func getCurrentDirectory() string {
 	return strings.Replace(dir, "\\", "/", -1)
 }
 
+func GetConfigPath() string {
+	wd := os.Getenv("GO_WEIXIN_WORKDIR")
+	confPath := path.Join(wd, "config/")
+	return confPath
+}
 
 func init() {
 	// 需要配置项目根目录的环境变量，方便执行test
-	wd := os.Getenv("GO_WEIXIN_WORKDIR")
-	confPath := path.Join(wd, "config/")
+	confPath := GetConfigPath()
 	fmt.Println("配置目录: ", confPath)
 	ginEnv := os.Getenv("gin_env")
 	if ginEnv == "" {

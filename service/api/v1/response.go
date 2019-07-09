@@ -2,7 +2,6 @@ package v1
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/gin-gonic/gin/binding"
 	"go-weixin/pkg/apierror"
 )
 
@@ -53,19 +52,20 @@ func (g *Gin) NotFoundResponse(errCode int) {
 }
 
 // 处理post data
-func (g *Gin) GetBodyData(obj interface{}) (interface{}, error) {
-	var err error
-	contentType := g.C.Request.Header.Get("Content-Type")
-	switch contentType {
-	case "application/json":
-		err = g.C.BindJSON(&obj)
-	case "application/x-www-form-urlencoded":
-		err = g.C.BindWith(&obj, binding.Form)
-	default:
-		err = g.C.Bind(&obj) //使用自动推断
-	}
-	return obj, err
-}
+//func (g *Gin) GetBodyData(obj interface{}) (interface{}, error) {
+//	var err error
+//	contentType := g.C.Request.Header.Get("Content-Type")
+//	switch contentType {
+//	case "application/json":
+//		body, _ := ioutil.ReadAll(g.C.Request.Body)
+//		err = json.Unmarshal(body, &obj)
+//	case "application/x-www-form-urlencoded":
+//		err = g.C.BindWith(&obj, binding.Form)
+//	default:
+//		err = g.C.Bind(&obj) //使用自动推断
+//	}
+//	return obj, err
+//}
 
 func (g *Gin) List() {
 

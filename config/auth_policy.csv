@@ -1,0 +1,2 @@
+p, viewer, /api/*, GET
+p, superuser, *, *

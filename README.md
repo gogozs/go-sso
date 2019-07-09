@@ -8,6 +8,18 @@
 4. go run main.go
 
 
+## 功能说明
+
+1. cli
+```
+cd cli/  && go build cli  
+./cli migreate  # 数据库初始化 需要创建正式数据库以及一个测试数据库
+./cli createsuperuser username password  # 创建超级用户
+```
+
+
+
+
 ## 开发计划 
 
 - [ ] 系统用户管理

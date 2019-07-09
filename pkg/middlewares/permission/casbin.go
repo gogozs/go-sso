@@ -9,11 +9,13 @@ import (
 	"go-weixin/service/models"
 	"log"
 	"os"
+	"path"
 )
 
 // 加载权限设置
 func init() {
-	csvFile, err := os.Open("config/auth_policy.csv")
+	confPath := config.GetConfigPath()
+	csvFile, err := os.Open(path.Join(confPath, "auth_policy.csv"))
 	if err != nil {
 		panic(err)
 	}
@@ -83,27 +85,3 @@ func Casbin() *casbin.Enforcer {
 	return enforcer
 }
 
-//func AddCasbin(c *gin.Context) {
-//	rolename := c.PostForm("rolename")
-//	path := c.PostForm("path")
-//	method := c.PostForm("method")
-//	ptype := "p"
-//	casbin := CasbinModel{
-//		Ptype:    ptype,
-//		RoleName: rolename,
-//		Path:     path,
-//		Method:   method,
-//	}
-//	isok := casbins.AddCasbin(casbin)
-//	if isok {
-//		c.JSON(http.StatusOK, gin.H{
-//			"success": true,
-//			"msg":     "保存成功",
-//		})
-//	} else {
-//		c.JSON(http.StatusOK, gin.H{
-//			"success": false,
-//			"msg":     "保存失败",
-//		})
-//	}
-//}
