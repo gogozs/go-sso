@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"database/sql"
 	"errors"
 	"fmt"
 	"github.com/spf13/cobra"
@@ -25,7 +26,8 @@ var createUserCmd = &cobra.Command{
 func CreateUser(args []string) {
 	username := args[0]
 	password := args[1]
-	user := models.User{Username:username, Password:password}
+	superuser := sql.NullString{String:"superuser", Valid:true}
+	user := models.User{Username:username, Password:password, Role:superuser}
 	err := models.CreateUser(user)
 	if err != nil {
 		fmt.Println(err)
