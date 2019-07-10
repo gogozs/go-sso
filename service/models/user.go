@@ -14,6 +14,7 @@ type User struct {
 	Password    string `json:"password" gorm:"type:varchar(128)"`
 	Role        string `json:"role";"default:viewer"`
 	UserProfile UserProfile // OneToOne
+	WxId        sql.NullString `json:"wx_id gorm:"type:varchar(64);unique_index`
 }
 
 type UserProfile struct {
@@ -41,7 +42,7 @@ func GetUser(username string) (user User, err error) {
 	}
 }
 
-func CreateUser(user  User) error {
+func CreateUser(user User) error {
 	if user.Password != "" {
 		var err error
 		user.Password, err = GeneratePassword(user.Password)
@@ -70,7 +71,7 @@ func ComparePassword(userPwd, hashPwd string) error {
 }
 
 func CheckUser(username, password string) bool {
-	user, err :=  GetUser(username)
+	user, err := GetUser(username)
 	if err != nil {
 		return false
 	} else {
