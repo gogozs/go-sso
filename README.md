@@ -10,7 +10,7 @@
 
 ## 功能说明
 
-1. cli
+1. cli 命令行工具
 ```
 cd cli/  && go build cli  
 ./cli migreate  # 数据库初始化 需要创建正式数据库以及一个测试数据库

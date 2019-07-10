@@ -16,3 +16,4 @@ test/
 */test/
 *.log
 config/local.yml
+cli/cli
