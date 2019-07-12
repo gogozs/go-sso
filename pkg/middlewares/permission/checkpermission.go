@@ -3,7 +3,7 @@ package permission
 import (
 	"github.com/casbin/casbin"
 	"github.com/gin-gonic/gin"
-	"go-weixin/pkg/apierror"
+	"go-weixin/pkg/api_error"
 	"go-weixin/service/api/v1"
 	"go-weixin/service/models"
 )
@@ -39,8 +39,8 @@ func (a *PermissionAuthorizer) CheckPermission(c *gin.Context) bool {
 // RequirePermission returns the 403 Forbidden to the client
 func (a *PermissionAuthorizer) RequirePermission(c *gin.Context) {
 	c.JSON(403, v1.Response{
-		Code: apierror.ERROR_AUTH,
-		Msg:  apierror.GetMsg(apierror.ERROR_AUTH),
+		Code: api_error.ERROR_AUTH,
+		Msg:  api_error.GetMsg(api_error.ERROR_AUTH),
 	})
 	c.Abort()
 }

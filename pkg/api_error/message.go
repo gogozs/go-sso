@@ -1,4 +1,4 @@
-package apierror
+package api_error
 
 var MsgFlags = map[int]string{
 	SUCCESS:        "OK",

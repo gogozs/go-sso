@@ -3,11 +3,11 @@ module go-weixin
 go 1.12
 
 require (
-	github.com/DATA-DOG/go-sqlmock v1.3.3
 	github.com/Unknwon/com v0.0.0-20190321035513-0fed4efef755
 	github.com/boj/redistore v0.0.0-20180917114910-cd5dcc76aeff // indirect
 	github.com/casbin/casbin v1.9.1
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
+	github.com/fatih/structs v1.1.0
 	github.com/gin-contrib/cache v1.1.0
 	github.com/gin-gonic/contrib v0.0.0-20190526021735-7fb7810ed2a0
 	github.com/gin-gonic/gin v1.4.0
@@ -17,7 +17,6 @@ require (
 	github.com/json-iterator/go v1.1.6
 	github.com/lib/pq v1.1.1
 	github.com/mitchellh/go-homedir v1.1.0
-	github.com/selvatico/go-mocket v1.0.7
 	github.com/sirupsen/logrus v1.4.2
 	github.com/spf13/cobra v0.0.5
 	github.com/spf13/viper v1.4.0

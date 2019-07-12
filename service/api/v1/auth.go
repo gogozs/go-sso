@@ -2,7 +2,7 @@ package v1
 
 import (
 	"github.com/gin-gonic/gin"
-	"go-weixin/pkg/apierror"
+	"go-weixin/pkg/api_error"
 	"go-weixin/pkg/json"
 	"go-weixin/pkg/log"
 	"go-weixin/service/models"
@@ -18,17 +18,17 @@ func ViewLogin(c *gin.Context) {
 	err := json.Unmarshal(body, &user) // c.BindJSON(user) 无法正确解析
 	if err != nil {
 		log.Error(err)
-		appG.FailResponse(apierror.INVALID_PARAMS)
+		appG.FailResponse(api_error.INVALID_PARAMS)
 	} else {
 		if r := models.CheckUser(user.Username, user.Password); r {
 			token, err := util.GenerateToken(user.Username, user.Password)
 			if err != nil {
-				appG.FailResponse(apierror.INVALID_PARAMS)
+				appG.FailResponse(api_error.INVALID_PARAMS)
 			} else {
 				appG.SuccessResponse(gin.H{"token": token})
 			}
 		} else {
-			appG.FailResponse(apierror.INVALID_PARAMS)
+			appG.FailResponse(api_error.INVALID_PARAMS)
 		}
 	}
 }
@@ -40,10 +40,10 @@ func ViewRegister(c *gin.Context) {
 	err := c.BindJSON(user)
 	if err != nil {
 		log.Error(err)
-		appG.FailResponse(apierror.INVALID_PARAMS)
+		appG.FailResponse(api_error.INVALID_PARAMS)
 	} else {
 		if err := models.CreateUser(user); err != nil {
-			appG.FailResponse(apierror.INVALID_PARAMS)
+			appG.FailResponse(api_error.INVALID_PARAMS)
 		} else {
 			appG.SuccessResponse("注册成功")
 		}

@@ -1,4 +1,4 @@
-package apierror
+package api_error
 
 const (
 	SUCCESS        = 0

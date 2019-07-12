@@ -2,7 +2,7 @@ package v1
 
 import (
 	"github.com/gin-gonic/gin"
-	"go-weixin/pkg/apierror"
+	"go-weixin/pkg/api_error"
 )
 
 type Gin struct {
@@ -21,16 +21,16 @@ func (g *Gin) Response(httpCode, msgCode int, data interface{}) {
 	g.C.JSON(httpCode, Response{
 		Code: msgCode,
 		Data: data,
-		Msg:  apierror.GetMsg(msgCode),
+		Msg:  api_error.GetMsg(msgCode),
 	})
 	return
 }
 
 func (g *Gin) SuccessResponse(data interface{}) {
 	g.C.JSON(200, Response{
-		Code: apierror.SUCCESS,
+		Code: api_error.SUCCESS,
 		Data: data,
-		Msg:  apierror.GetMsg(apierror.SUCCESS),
+		Msg:  api_error.GetMsg(api_error.SUCCESS),
 	})
 	return
 }
@@ -38,15 +38,15 @@ func (g *Gin) SuccessResponse(data interface{}) {
 func (g *Gin) FailResponse(errCode int) {
 	g.C.JSON(400, Response{
 		Code: -1,
-		Msg:  apierror.GetMsg(errCode),
+		Msg:  api_error.GetMsg(errCode),
 	})
 	return
 }
 
 func (g *Gin) NotFoundResponse(errCode int) {
 	g.C.JSON(404, Response{
-		Code: apierror.NOT_FOUND,
-		Msg:  apierror.GetMsg(errCode),
+		Code: api_error.NOT_FOUND,
+		Msg:  api_error.GetMsg(errCode),
 	})
 	return
 }

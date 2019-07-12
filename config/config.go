@@ -12,13 +12,14 @@ import (
 )
 
 type Config struct {
-	MySQL  MySQLConfig
+	MySQL     MySQLConfig
 	TestMysql TestMysqlConfig
-	Cache  CacheConfig
-	Jwt    JwtConfig
-	Cookie CookieConfig
-	Common CommonConfig
-	Email  EmailConfig
+	Cache     CacheConfig
+	Jwt       JwtConfig
+	Cookie    CookieConfig
+	Common    CommonConfig
+	Email     EmailConfig
+	Weixin    WeixinConfig
 }
 
 type MySQLConfig struct {
@@ -40,7 +41,6 @@ type TestMysqlConfig struct {
 	Dbtype   string
 	Prefix   string
 }
-
 
 type CacheConfig struct {
 	Host        string
@@ -85,6 +85,14 @@ type EmailConfig struct {
 	User     string
 	Password string
 	Admin    string
+}
+
+type WeixinConfig struct {
+	AppID       string
+	AppSecret   string
+	GrantType  string
+	EncodingAESKey string  // 加密密钥
+	Token  string //官网中配置相同
 }
 
 func getCurrentDirectory() string {

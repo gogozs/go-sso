@@ -1,4 +1,4 @@
-package apirequest
+package api_request
 
 import (
 	"bytes"
@@ -11,14 +11,14 @@ import (
 	"strings"
 )
 
-func Get(url string, headers map[string]string, params map[string]string) ([]byte, io.ReadCloser) {
+func Get(url string, headers map[string]interface{}, params map[string]interface{}) ([]byte, int, io.ReadCloser) {
 	httpRequest, _ := http.NewRequest("GET", url, nil)
 	client := &http.Client{}
 
 	// add headers
 	if headers != nil {
 		for k, v := range headers {
-			httpRequest.Header.Add(k, v)
+			httpRequest.Header.Add(k, v.(string))
 		}
 	} else {
 		httpRequest.Header.Add("Content-Type", "application/json")
@@ -29,7 +29,7 @@ AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.103 Safari/537.36`)
 	// add url params
 	q := httpRequest.URL.Query()
 	for k, v := range params {
-		q.Add(k, v)
+		q.Add(k, v.(string))
 	}
 	httpRequest.URL.RawQuery = q.Encode()
 
@@ -45,7 +45,7 @@ AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.103 Safari/537.36`)
 			panic(err)
 		}
 		res.Body = ioutil.NopCloser(bytes.NewBuffer(data)) // io.ReadWriter can only read once
-		return data, res.Body
+		return data, res.StatusCode, res.Body
 	}
 }
 

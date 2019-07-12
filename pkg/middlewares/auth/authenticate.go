@@ -2,7 +2,7 @@ package auth
 
 import (
 	"github.com/gin-gonic/gin"
-	"go-weixin/pkg/apierror"
+	"go-weixin/pkg/api_error"
 	"go-weixin/pkg/middlewares/auth/drivers"
 	"go-weixin/service/api/v1"
 	"go-weixin/service/models"
@@ -49,7 +49,7 @@ func AuthMiddleware(authList []string) gin.HandlerFunc {
 		if !loginSuccess {
 			appG := v1.Gin{C: c}
 			c.Header("WWW-Authenticate", "Token realm=\"Authorization Required\"")
-			appG.Response(http.StatusUnauthorized, apierror.UNAUTHORIZED, gin.H{"msg": apierror.GetMsg(apierror.UNAUTHORIZED)})
+			appG.Response(http.StatusUnauthorized, api_error.UNAUTHORIZED, gin.H{"msg": api_error.GetMsg(api_error.UNAUTHORIZED)})
 			c.Abort()
 		}
 		c.Next()

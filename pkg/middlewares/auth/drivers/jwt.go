@@ -3,7 +3,7 @@ package drivers
 import (
 	"github.com/gin-gonic/gin"
 	"go-weixin/config"
-	"go-weixin/pkg/apierror"
+	"go-weixin/pkg/api_error"
 	"go-weixin/pkg/log"
 	"go-weixin/service/models"
 	"go-weixin/util"
@@ -39,13 +39,13 @@ func (jwtAuth *jwtAuthManager) Check(c *gin.Context) bool {
 		log.Error(err)
 		return false
 	} else if time.Now().Unix() > clamis.ExpiresAt {
-		log.Info(apierror.GetMsg(apierror.ERROR_AUTH))
+		log.Info(api_error.GetMsg(api_error.ERROR_AUTH))
 		return false
 	}
 	username := clamis.Username
 	user, err := models.GetUser(username)
 	if err != nil {
-		log.Info(apierror.GetMsg(apierror.ERROR_AUTH))
+		log.Info(api_error.GetMsg(api_error.ERROR_AUTH))
 		return false
 	} else {
 		c.Set("User", user)
@@ -68,13 +68,13 @@ func (jwtAuth *jwtAuthManager) User(c *gin.Context) interface{} {
 			log.Info(err)
 			panic(err)
 		} else if time.Now().Unix() > clamis.ExpiresAt {
-			log.Info(apierror.GetMsg(apierror.ERROR_AUTH))
+			log.Info(api_error.GetMsg(api_error.ERROR_AUTH))
 			return nil
 		}
 		username := clamis.Username
 		user, err := models.GetUser(username)
 		if err != nil {
-			log.Info(apierror.GetMsg(apierror.ERROR_AUTH))
+			log.Info(api_error.GetMsg(api_error.ERROR_AUTH))
 			panic(err)
 		} else {
 			c.Set("User", user)
