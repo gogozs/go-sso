@@ -17,6 +17,7 @@ func GetRouter() *gin.Engine {
 func InitRouter() *gin.Engine {
 	router = gin.Default()
 	router.Use(erroremail.ErrEmailWriter())
+	WxRouterInit()
 	AuthRouterInit()
 	return router
 }

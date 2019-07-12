@@ -33,6 +33,7 @@ import (
 	"go-weixin/sdk"
 )
 
+// token 认证
 func ViewWx(c *gin.Context) {
 	appG := Gin{C: c}
 	s := sdk.TokenSignature{}
