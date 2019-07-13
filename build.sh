@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 # git
+cd $GO_WEIXIN_WORKDIR
 echo "更新代码..."
 git pull origin master
 

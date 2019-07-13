@@ -1,0 +1,9 @@
+version: '2'
+services:
+  web:
+    container_name: go-weixin
+    build: .
+    ports:
+      - "8008:8008"
+    environment:
+      GO_WEIXIN_WORKDIR: /app
