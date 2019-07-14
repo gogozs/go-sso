@@ -3,6 +3,7 @@ services:
   web:
     container_name: go-weixin
     build: .
+    restart: always
     ports:
       - "8008:8008"
     environment:

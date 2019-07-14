@@ -3,7 +3,8 @@
 # git
 cd $GO_WEIXIN_WORKDIR
 echo "更新代码..."
-git pull origin master
+git fetch --all
+git reset --hard origin/master
 
 # docker
 echo "docker构建..."
