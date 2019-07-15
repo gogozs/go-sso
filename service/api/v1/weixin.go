@@ -8,15 +8,14 @@ import (
 
 // token 认证
 func ViewWx(c *gin.Context) {
-	appG := Gin{C: c}
 	s := sdk.TokenSignature{}
 	err := c.BindQuery(&s)
 	if err != nil {
 		log.Error(err)
-		appG.SuccessResponse(false)
+		c.JSON(200, false)
 	} else if s.Confirm() {
-		appG.SuccessResponse(true)
+		c.JSON(200, true)
 	} else {
-		appG.SuccessResponse(false)
+		c.JSON(200, false)
 	}
 }

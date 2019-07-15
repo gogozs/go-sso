@@ -1,11 +1,13 @@
-package api
+package api_test
 
 import (
 	"bytes"
 	"fmt"
+	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 	"go-weixin/pkg/json"
 	"go-weixin/pkg/log"
+	"go-weixin/service/api"
 	"go-weixin/service/models"
 	"net/http"
 	"net/http/httptest"
@@ -14,10 +16,12 @@ import (
 
 var (
 	user models.User
+	router *gin.Engine
 )
 
 func init() {
-	InitRouter()
+	api.InitRouter()
+	router = api.GetRouter()
 	models.SetupTests() // 初始化mock database
 	user = models.User{Username: "test", Password: "testpassword", Role: "superuser"}
 	err := models.CreateUser(user)
