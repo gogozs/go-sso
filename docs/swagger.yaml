@@ -1,0 +1,77 @@
+basePath: /v2
+definitions:
+  model.UserParams:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+  viewset.Response:
+    properties:
+      code:
+        type: integer
+      data:
+        type: object
+      msg:
+        type: string
+    type: object
+host: petstore.swagger.io
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: This is a sample server Petstore server.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Swagger Example API
+  version: "1.0"
+paths:
+  /api/public/v1/auth/login/:
+    post:
+      consumes:
+      - application/json
+      description: login by username and password
+      parameters:
+      - description: username && password
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/model.UserParams'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/viewset.Response'
+            type: object
+      summary: user login
+  /api/public/v1/auth/register/:
+    post:
+      consumes:
+      - application/json
+      description: register by username and password
+      parameters:
+      - description: username && password
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/model.UserParams'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/viewset.Response'
+            type: object
+      summary: user register
+swagger: "2.0"

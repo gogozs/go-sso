@@ -1,0 +1,58 @@
+common:
+  debug:           true
+  AppSecret:      sdfsfdsfdscmasndf2weaqwerm
+  template_path:
+  HttpPort:       8009
+  ReadTimeout:    30
+  WriteTimeout:   30
+  PageSize:       100
+
+cors:
+  - http://127.0.0.1:10086
+
+mysql:
+  dbtype: mysql
+  host: localhost
+  username: zs
+  password: zs
+  port: 3306
+  dbname: weixin
+  prefix: go_
+
+
+testmysql:
+  dbtype: mysql
+  host: localhost
+  username: zs
+  password: zs
+  port: 3306
+  dbname: test_weixin
+  prefix: test_
+
+
+cache:
+  host: localhost:6379
+  password:
+  dbname: 4
+
+jwt:
+  SECRET: session
+  EXP:    3600
+  ALG:    HS256
+
+cokkie:
+  name: cokkie
+
+
+email:
+  host:
+  password:
+  user:
+  admin:
+
+weixin:
+  AppID:
+  AppSecret:
+  GrantType:
+  EncodingAESKey:
+  Token:

@@ -1,0 +1,12 @@
+version: '2'
+services:
+  web:
+    container_name: go-qiuplus
+    build: .
+    restart: always
+    ports:
+      - "8008:8008"
+    environment:
+      GO_WEIXIN_WORKDIR: /app
+      gin_env: production
+      GIN_MODE: release
