@@ -2,8 +2,8 @@ package v1
 
 import (
 	"github.com/gin-gonic/gin"
-	"go-qiuplus/pkg/wx/wx_client"
-	"go-qiuplus/service/api/viewset"
+	"go-sso/pkg/wx/wx_client"
+	"go-sso/service/api/viewset"
 )
 
 type WxViewset struct {

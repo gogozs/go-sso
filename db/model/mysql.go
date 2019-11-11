@@ -5,8 +5,8 @@ import (
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
-	"go-qiuplus/conf"
-	"go-qiuplus/pkg/log"
+	"go-sso/conf"
+	"go-sso/pkg/log"
 )
 
 var (

@@ -3,7 +3,7 @@ package api_request
 import (
 	"bytes"
 	"fmt"
-	"go-qiuplus/pkg/json"
+	"go-sso/pkg/json"
 	"io"
 	"io/ioutil"
 	"log"

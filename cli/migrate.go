@@ -2,7 +2,7 @@ package cli
 
 import (
 	"github.com/spf13/cobra"
-	"go-qiuplus/db/model"
+	"go-sso/db/model"
 )
 
 var migrateCmd = &cobra.Command{

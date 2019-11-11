@@ -1,8 +1,8 @@
 package v1
 
 import (
-	"go-qiuplus/db/query"
-	"go-qiuplus/service/api/viewset"
+	"go-sso/db/query"
+	"go-sso/service/api/viewset"
 )
 
 func GetAuthVS() *AuthViewset {

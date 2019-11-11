@@ -1,8 +1,8 @@
 package query
 
 import (
-	"go-qiuplus/conf"
-	"go-qiuplus/db/model"
+	"go-sso/conf"
+	"go-sso/db/model"
 )
 
 // 构建 mock database

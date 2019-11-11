@@ -6,8 +6,8 @@ import (
 	"fmt"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"github.com/swaggo/gin-swagger/swaggerFiles"
-	"go-qiuplus/conf"
-	_ "go-qiuplus/docs"
+	"go-sso/conf"
+	_ "go-sso/docs"
 )
 
 

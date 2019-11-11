@@ -1,4 +1,4 @@
-module go-qiuplus
+module go-sso
 
 go 1.12
 
@@ -17,6 +17,7 @@ require (
 	github.com/go-playground/locales v0.13.0 // indirect
 	github.com/go-playground/universal-translator v0.16.0 // indirect
 	github.com/go-sql-driver/mysql v1.4.1
+	github.com/go-zs/cache v1.0.0
 	github.com/gorilla/sessions v1.1.3
 	github.com/jinzhu/gorm v1.9.10
 	github.com/json-iterator/go v1.1.6
@@ -35,7 +36,9 @@ require (
 	golang.org/x/crypto v0.0.0-20190701094942-4def268fd1a4
 	golang.org/x/net v0.0.0-20190923162816-aa69164e4478 // indirect
 	golang.org/x/tools v0.0.0-20190924052046-3ac2a5bbd98a // indirect
+	gopkg.in/alexcesaro/quotedprintable.v3 v3.0.0-20150716171945-2caba252f4dc // indirect
 	gopkg.in/go-playground/validator.v9 v9.30.0
+	gopkg.in/gomail.v2 v2.0.0-20160411212932-81ebce5c23df
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0
 )
 

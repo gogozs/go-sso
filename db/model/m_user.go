@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"github.com/go-sql-driver/mysql"
 	"github.com/jinzhu/gorm"
-	"go-qiuplus/pkg/log"
+	"go-sso/pkg/log"
 	"gopkg.in/go-playground/validator.v9"
 	"regexp"
 )
@@ -50,7 +50,6 @@ type RegisterParams struct {
 	Password  string `json:"password" validate:"required"`
 	Telephone string `json:"telephone" validate:"required"`
 	Email     string `json:"email"`
-	ValidCode string `json:"valid_code" validate:"required"`
 }
 
 func usernameFunc(f validator.FieldLevel) bool {

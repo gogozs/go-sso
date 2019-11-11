@@ -5,7 +5,7 @@ import (
 	"encoding/csv"
 	"fmt"
 	"github.com/spf13/cobra"
-	"go-qiuplus/conf"
+	"go-sso/conf"
 	"os"
 	"path"
 )

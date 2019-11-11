@@ -87,9 +87,10 @@ type CookieConfig struct {
 
 type EmailConfig struct {
 	Host     string
+	Port     int
 	User     string
 	Password string
-	Admin    string
+	Admin    []string
 }
 
 type WeixinConfig struct {

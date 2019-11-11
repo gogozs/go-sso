@@ -1,7 +1,7 @@
 package main
 
 import (
-	"go-qiuplus/cli"
+	"go-sso/cli"
 )
 
 // @title Swagger Example API

@@ -2,12 +2,12 @@ package auth
 
 import (
 	"github.com/gin-gonic/gin"
-	"go-qiuplus/conf"
-	model2 "go-qiuplus/db/model"
-	"go-qiuplus/db/query"
-	"go-qiuplus/pkg/api_error"
-	"go-qiuplus/pkg/log"
-	"go-qiuplus/util"
+	"go-sso/conf"
+	model2 "go-sso/db/model"
+	"go-sso/db/query"
+	"go-sso/pkg/api_error"
+	"go-sso/pkg/log"
+	"go-sso/util"
 	"net/http"
 	"strings"
 	"time"
@@ -41,7 +41,7 @@ func (jwtAuth *jwtAuthManager) Check(c *gin.Context) error {
 		return err
 	}
 	username := clamis.Username
-	user, err := query.UserQ.GetUserByName(username)
+	user, err := query.UserQ.GetUserByAccount(username)
 	if err != nil {
 		return err
 	} else {
@@ -69,7 +69,7 @@ func (jwtAuth *jwtAuthManager) User(c *gin.Context) interface{} {
 			return nil
 		}
 		username := clamis.Username
-		user, err := query.UserQ.GetUserByName(username)
+		user, err := query.UserQ.GetUserByAccount(username)
 		if err != nil {
 			panic(err)
 		} else {

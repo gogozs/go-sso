@@ -2,12 +2,13 @@ package v1
 
 import (
 	"github.com/gin-gonic/gin"
-	"go-qiuplus/db/inter"
-	"go-qiuplus/db/model"
-	"go-qiuplus/pkg/api_error"
-	"go-qiuplus/pkg/log"
-	"go-qiuplus/service/api/viewset"
-	"go-qiuplus/util"
+	"go-sso/db/inter"
+	"go-sso/db/model"
+	"go-sso/pkg/api_error"
+	"go-sso/pkg/log"
+	"go-sso/pkg/storage"
+	"go-sso/service/api/viewset"
+	"go-sso/util"
 )
 
 type AuthViewset struct {
@@ -57,11 +58,11 @@ func (this *AuthViewset) Login(c *gin.Context) (err error) {
 // @Success 200 {object} viewset.Response
 // @Router /api/public/v1/auth/login/ [post]
 func (this *AuthViewset) TelephoneLogin(c *gin.Context) (err error) {
-
+	return
 }
 
 // @Summary user register
-// @Description register by username and password
+// @Description register by username, telephone and password
 // @Accept  json
 // @Produce  json
 // @Param  user body model.UserParams true "username && password"
@@ -79,31 +80,7 @@ func (this *AuthViewset) Register(c *gin.Context) (err error) {
 	if err != nil {
 		return err
 	}
-	errs := make(map[string]string)
-	// 检查参数是否合法
-	if this.itemInter.Exists(rp.Username, "username") {
-		errs["username"] = "用户已经存在"
-	}
-	if this.itemInter.Exists(rp.Telephone, "telephone") {
-		errs["telephone"] = "手机号已经存在"
-	}
-	if this.itemInter.Exists(rp.Email, "email") {
-		errs["email"] = "email已经存在"
-	}
-	if len(errs) > 0 {
-		this.FailResponse(c, api_error.ErrInvalid, errs)
-		return
-	}
-	// 检查是否重复注册
-	if this.itemInter.Exists(rp.Username, "username") {
-		errs["username"] = "用户已经存在"
-	}
-	if this.itemInter.Exists(rp.Telephone, "telephone") {
-		errs["telephone"] = "手机号已经存在"
-	}
-	if this.itemInter.Exists(rp.Email, "email") {
-		errs["email"] = "email已经存在"
-	}
+	errs := this.CheckRegisterParams(&rp)
 	if len(errs) > 0 {
 		this.FailResponse(c, api_error.ErrInvalid, errs)
 		return
@@ -123,18 +100,35 @@ func (this *AuthViewset) Register(c *gin.Context) (err error) {
 	} else {
 		return this.SuccessResponse(c, "注册成功")
 	}
-
 }
 
-// @Summary 检测用户是否合法 手机，邮箱是否被占用
-// @Description register by username and password
-// @Accept  json
-// @Produce  json
-// @Param  user body model.UserParams true "username && password"
-// @Success 200 {object} viewset.Response
-// @Router /api/public/v1/auth/register/ [post]
-func (this *AuthViewset) UserCheck(c *gin.Context) (err error) {
-
+// 检测注册用户参数
+func (this *AuthViewset) CheckRegisterParams(rp *model.RegisterParams) map[string]string {
+	errs := make(map[string]string)
+	// 检查参数是否合法
+	if this.itemInter.Exists(rp.Username, "username") {
+		errs["username"] = "用户已经存在"
+	}
+	if this.itemInter.Exists(rp.Telephone, "telephone") {
+		errs["telephone"] = "手机号已经存在"
+	}
+	if this.itemInter.Exists(rp.Email, "email") {
+		errs["email"] = "email已经存在"
+	}
+	if len(errs) > 0 {
+		return errs
+	}
+	// 检查是否重复注册
+	if this.itemInter.Exists(rp.Username, "username") {
+		errs["username"] = "用户已经存在"
+	}
+	if this.itemInter.Exists(rp.Telephone, "telephone") {
+		errs["telephone"] = "手机号已经存在"
+	}
+	if this.itemInter.Exists(rp.Email, "email") {
+		errs["email"] = "email已经存在"
+	}
+	return errs
 }
 
 // @Summary 发送手机验证码
@@ -145,7 +139,20 @@ func (this *AuthViewset) UserCheck(c *gin.Context) (err error) {
 // @Success 200 {object} viewset.Response
 // @Router /api/public/v1/auth/register/ [post]
 func (this *AuthViewset) SendSmsCode(c *gin.Context) (err error) {
+	return this.SuccessBlackResponse(c)
+}
 
+
+// @Summary telephone check
+// @Description 手机验证码确认
+// @Accept  json
+// @Produce  json
+// @Param  user body model.UserParams true "username && password"
+// @Success 200 {object} viewset.Response
+// @Router /api/public/v1/auth/register/ [post]
+func (this *AuthViewset) SmsCodeValid(c *gin.Context) (err error) {
+	// TODO	接口检测
+	return this.SuccessBlackResponse(c)
 }
 
 // @Summary 发送邮箱验证码
@@ -156,7 +163,29 @@ func (this *AuthViewset) SendSmsCode(c *gin.Context) (err error) {
 // @Success 200 {object} viewset.Response
 // @Router /api/public/v1/auth/register/ [post]
 func (this *AuthViewset) SendEmailCode(c *gin.Context) (err error) {
+	email := c.Query("email")
+	if ok := this.itemInter.IsValid(email, "email"); !ok {
+		return api_error.ErrInvalid
+	}
+	cacheStore := storage.GetStore()
+	code := util.RandomCode()
+	cacheStore.SetCache(email, code)
+	// TODO 发送邮件
 
+	return this.SuccessBlackResponse(c)
+}
+
+// @Summary email check
+// @Description email验证码确认
+// @Accept  json
+// @Produce  json
+// @Param  user body model.UserParams true "username && password"
+// @Success 200 {object} viewset.Response
+// @Router /api/public/v1/auth/register/ [post]
+func (this *AuthViewset) EmailCodeValid(c *gin.Context) (err error) {
+	// TODO	接口检测
+
+	return this.SuccessBlackResponse(c)
 }
 
 // @Summary 重置密码
@@ -168,4 +197,5 @@ func (this *AuthViewset) SendEmailCode(c *gin.Context) (err error) {
 // @Router /api/public/v1/auth/register/ [post]
 func (this *AuthViewset) ResetPassword(c *gin.Context) (err error) {
 
+	return this.SuccessBlackResponse(c)
 }

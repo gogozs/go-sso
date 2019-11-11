@@ -1,15 +1,16 @@
 package email
 
 import (
-	"go-qiuplus/conf"
-	"net/smtp"
-	"strings"
+	"go-sso/conf"
+	"go-sso/pkg/log"
+	"gopkg.in/gomail.v2"
 )
 
 var (
 	user     string
 	password string
 	host     string
+	port     int
 	admin    []string
 )
 
@@ -18,23 +19,23 @@ func init() {
 	user = e.User
 	password = e.Password
 	host = e.Host
-	admin = []string{e.Admin}
+	port = e.Port
+	admin = e.Admin
 }
 
-func SendEmail(to []string, subject, body, mailtype string) error {
+func SendEmail(to []string, subject string, body string) error {
+	m := gomail.NewMessage()
+	m.SetHeader("From", user)
 	if to == nil {
 		to = admin
 	}
-	hp := strings.Split(host, ":")
-	auth := smtp.PlainAuth("", user, password, hp[0])
-	var content_type string
-	if mailtype == "html" {
-		content_type = "Content-Type: text/" + mailtype + "; charset=UTF-8"
-	} else {
-		content_type = "Content-Type: text/plain" + "; charset=UTF-8"
+	m.SetHeader("To", to...)
+	m.SetHeader("Subject", subject)
+	m.SetBody("text/html", body)
+	d := gomail.NewDialer(host, port, user, password)
+	err := d.DialAndSend(m)
+	if err != nil {
+		log.Error(err)
 	}
-	tostr := strings.Join(to, ",")
-	msg := []byte("To: " + tostr + "\r\nFrom: " + user + ">\r\nSubject: " + subject + "\r\n" + content_type + "\r\n\r\n" + body)
-	err := smtp.SendMail(host, auth, user, to, msg)
 	return err
 }

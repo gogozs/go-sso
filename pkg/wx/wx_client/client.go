@@ -3,11 +3,11 @@ package wx_client
 import (
 	"fmt"
 	"github.com/pkg/errors"
-	"go-qiuplus/conf"
-	"go-qiuplus/pkg/api_request"
-	"go-qiuplus/pkg/json"
-	"go-qiuplus/pkg/log"
-	"go-qiuplus/util/encryption"
+	"go-sso/conf"
+	"go-sso/pkg/api_request"
+	"go-sso/pkg/json"
+	"go-sso/pkg/log"
+	"go-sso/util/encryption"
 )
 
 var (

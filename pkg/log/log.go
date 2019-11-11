@@ -1,7 +1,7 @@
 package log
 
 import (
-	"go-qiuplus/conf"
+	"go-sso/conf"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"

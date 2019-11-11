@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"github.com/casbin/casbin"
 	_ "github.com/go-sql-driver/mysql"
-	"go-qiuplus/conf"
-	"go-qiuplus/db/model"
-	"go-qiuplus/pkg/log"
+	"go-sso/conf"
+	"go-sso/db/model"
+	"go-sso/pkg/log"
 	"path/filepath"
 )
 

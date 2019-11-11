@@ -2,7 +2,7 @@ package viewset
 
 import (
 	"github.com/gin-gonic/gin"
-	"go-qiuplus/pkg/api_error"
+	"go-sso/pkg/api_error"
 	"net/http"
 )
 
@@ -61,7 +61,7 @@ func (this *ViewSet) SuccessResponse(c *gin.Context, data interface{}) error {
 	return nil
 }
 
-func (this *ViewSet) BlankResponse(c *gin.Context) error {
+func (this *ViewSet) SuccessBlackResponse(c *gin.Context) error {
 	c.JSON(http.StatusOK, GetSuccessResponse(nil))
 	return nil
 }

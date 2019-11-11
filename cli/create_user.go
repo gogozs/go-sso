@@ -4,8 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"github.com/spf13/cobra"
-	"go-qiuplus/db/model"
-	"go-qiuplus/db/query"
+	"go-sso/db/model"
+	"go-sso/db/query"
 )
 
 var createUserCmd = &cobra.Command{

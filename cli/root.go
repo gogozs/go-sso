@@ -5,8 +5,8 @@ import (
 	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"go-qiuplus/pkg/log"
-	"go-qiuplus/service/api/routes"
+	"go-sso/pkg/log"
+	"go-sso/service/api/routes"
 	"os"
 )
 
@@ -15,8 +15,8 @@ var cfgFile string
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "cli",
-	Short: "go-qiuplus cli tool",
-	Long:  `go-qiuplus cli tool`,
+	Short: "go-sso cli tool",
+	Long:  `go-sso cli tool`,
 	Run: func(cmd *cobra.Command, args []string) { StartServer() },
 }
 

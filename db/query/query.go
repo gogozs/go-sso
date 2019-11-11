@@ -2,8 +2,8 @@ package query
 
 import (
 	"github.com/jinzhu/gorm"
-	"go-qiuplus/conf"
-	"go-qiuplus/db/model"
+	"go-sso/conf"
+	"go-sso/db/model"
 	"strconv"
 )
 

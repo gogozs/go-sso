@@ -2,7 +2,7 @@ package permission
 
 import (
 	"errors"
-	"go-qiuplus/conf"
+	"go-sso/conf"
 	"runtime"
 	"github.com/casbin/casbin/model"
 	"github.com/casbin/casbin/persist"

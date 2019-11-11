@@ -4,8 +4,8 @@ import (
 	"errors"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/sessions"
-	"go-qiuplus/conf"
-	model2 "go-qiuplus/db/model"
+	"go-sso/conf"
+	model2 "go-sso/db/model"
 	"net/http"
 )
 

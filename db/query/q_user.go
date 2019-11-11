@@ -1,8 +1,8 @@
 package query
 
 import (
-	"go-qiuplus/db/model"
-	"go-qiuplus/util"
+	"go-sso/db/model"
+	"go-sso/util"
 	"regexp"
 )
 

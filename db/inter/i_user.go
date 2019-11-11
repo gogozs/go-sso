@@ -1,7 +1,7 @@
 package inter
 
 import (
-	"go-qiuplus/db/model"
+	"go-sso/db/model"
 )
 
 type IUser interface {

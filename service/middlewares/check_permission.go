@@ -3,10 +3,10 @@ package middlewares
 import (
 	"github.com/casbin/casbin"
 	"github.com/gin-gonic/gin"
-	"go-qiuplus/db/model"
-	"go-qiuplus/pkg/api_error"
-	"go-qiuplus/pkg/permission"
-	"go-qiuplus/service/api/viewset"
+	"go-sso/db/model"
+	"go-sso/pkg/api_error"
+	"go-sso/pkg/permission"
+	"go-sso/service/api/viewset"
 	"net/http"
 )
 

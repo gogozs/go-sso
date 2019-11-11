@@ -3,8 +3,8 @@ package util
 import (
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
-	"go-qiuplus/conf"
-	"go-qiuplus/pkg/api_error"
+	"go-sso/conf"
+	"go-sso/pkg/api_error"
 	"time"
 )
 

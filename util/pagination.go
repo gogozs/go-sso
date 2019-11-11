@@ -3,7 +3,7 @@ package util
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/Unknwon/com"
-	"go-qiuplus/conf"
+	"go-sso/conf"
 )
 
 
