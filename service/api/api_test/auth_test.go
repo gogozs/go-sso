@@ -42,11 +42,9 @@ func TestViewLogin(t *testing.T) {
 	// 获取一个请求实例
 	w := httptest.NewRecorder()
 	// 构造请求
-	// 参数依次是 请求方法、路由、参数
 	for _, testCase := range upTestCases {
 		u, _ := json.Marshal(testCase)
 		req, _ := http.NewRequest("POST", "/api/public/v1/auth/login/", bytes.NewReader(u))
-		// 执行
 		router.ServeHTTP(w, req)
 		assert.Equal(t, 200, w.Code)
 	}

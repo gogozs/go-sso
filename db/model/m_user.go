@@ -34,7 +34,7 @@ type UserProfile struct {
 
 // 回调自动创建用户资料
 func (user *User) AfterCreate(db *gorm.DB) (err error) {
-	if err = DB.Create(&UserProfile{UserID: user.ID}).Error; err != nil {
+	if err = db.Create(&UserProfile{UserID: user.ID}).Error; err != nil {
 		log.Error(err.Error())
 		return err
 	}

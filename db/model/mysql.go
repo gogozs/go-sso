@@ -25,11 +25,11 @@ func Migrate() {
 
 func init() {
 	c = conf.GetConfig()
-	Init(c.MySQL)
+	InitMysql(c.MySQL)
 }
 
 // 数据库初始化
-func Init(mysql conf.MySQLConfig) {
+func InitMysql(mysql conf.MySQLConfig) {
 	dbType = mysql.Dbtype
 	dbName = mysql.Dbname
 	user = mysql.Username
@@ -46,7 +46,22 @@ func Init(mysql conf.MySQLConfig) {
 	if err != nil {
 		log.Error(err.Error())
 	}
+	initDBConfig()
+}
 
+func InitSqlite() {
+	var err error
+	DB, err = gorm.Open("sqlite3", ":memory:")
+	if conf.GetConfig().Common.Debug {
+		DB.LogMode(true) // 开启 sql 日志
+	}
+	if err != nil {
+		panic(err)
+	}
+	initDBConfig()
+}
+
+func initDBConfig() {
 	gorm.DefaultTableNameHandler = func(db *gorm.DB, defaultTableName string) string {
 		if defaultTableName == tablePrefix+"casbin_rule" {
 			return defaultTableName
@@ -60,6 +75,7 @@ func Init(mysql conf.MySQLConfig) {
 	DB.DB().SetMaxIdleConns(10)
 	DB.DB().SetMaxOpenConns(100)
 }
+
 
 func CloseDB() {
 	defer DB.Close()
