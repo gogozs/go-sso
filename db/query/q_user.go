@@ -52,7 +52,7 @@ func (this *UserQuery) Exists(account, accountType string) bool {
 
 func (this *UserQuery) GetUserByAccount(account string) (obj *model.User, err error) {
 	obj = &model.User{}
-	if err = model.DB.Where("username = ? OR telephone = ? OR email = ?", account).First(obj).Error; err != nil {
+	if err = model.DB.Where("username = ? OR telephone = ? OR email = ?", account, account, account).First(obj).Error; err != nil {
 		return
 	} else {
 		return

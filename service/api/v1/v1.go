@@ -14,10 +14,3 @@ func GetAuthVS() *AuthViewset {
 	return authVS
 }
 
-func GetWxVS() *WxViewset {
-	vs := &viewset.ViewSet{}
-	wxVS := &WxViewset{
-		ViewSet: *vs,
-	}
-	return wxVS
-}

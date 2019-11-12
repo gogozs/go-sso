@@ -21,3 +21,5 @@ cli/cli
 production_build.sh
 local/
 test_local.go
+log-files/
+test.db

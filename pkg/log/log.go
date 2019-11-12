@@ -6,6 +6,7 @@ import (
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"
 	"os"
+	"path/filepath"
 	"strings"
 	"time"
 )
@@ -91,8 +92,9 @@ func getLevel(s string) (level zapcore.Level){
 
 func Logrotate() {
 	c := conf.GetConfig().Common
+	logPath := filepath.Join(conf.ExeDir(), "log-files/", c.LogFile)
 	w := zapcore.AddSync(&lumberjack.Logger{
-		Filename:   c.LogFile,
+		Filename:   logPath,
 		MaxSize:    500, // MB
 		MaxBackups: 3,
 		MaxAge:     28, // days

@@ -31,7 +31,7 @@ func (this *AuthViewset) ErrorHandler(f func(c *gin.Context) error) func(c *gin.
 // @Router /api/public/v1/auth/login/ [post]
 func (this *AuthViewset) Login(c *gin.Context) (err error) {
 	var up model.UserParams
-	err = c.ShouldBind(&up)
+	err = c.BindJSON(&up)
 	if err != nil {
 		log.Error(err.Error())
 		this.FailResponse(c, api_error.ErrInvalid)

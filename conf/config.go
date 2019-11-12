@@ -5,8 +5,6 @@ import (
 	"github.com/spf13/viper"
 	"os"
 	"path"
-	"path/filepath"
-	"strings"
 	"time"
 )
 
@@ -101,17 +99,23 @@ type WeixinConfig struct {
 	Token          string //官网中配置相同
 }
 
-func getCurrentDirectory() string {
-	dir, err := filepath.Abs(filepath.Dir(os.Args[0]))
-	if err != nil {
-		panic(err)
+func ExeDir() string {
+	dir, exists := os.LookupEnv("GO_SSO_WORKDIR")
+	if exists {
+		return dir
+	} else {
+		ex, err := os.Executable()
+		if err != nil {
+			panic(err)
+		}
+		exPath := path.Dir(ex)
+		return exPath
 	}
-	return strings.Replace(dir, "\\", "/", -1)
 }
 
 func GetConfigPath() string {
-	wd := os.Getenv("GO_SSO_WORKDIR")
-	confPath := path.Join(wd, "conf/")
+	basePath := ExeDir()
+	confPath := path.Join(basePath, "conf/")
 	return confPath
 }
 

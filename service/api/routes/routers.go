@@ -80,7 +80,6 @@ func initRouter() *gin.Engine {
 		),
 	)
 	AuthRouterInit()
-	WxRouterInit()
 	router.Use(middlewares.ErrEmailWriter())
 	return router
 }
@@ -91,14 +90,5 @@ func AuthRouterInit() {
 	{
 		public.POST("/login/", r.ErrorHandler(r.Login))
 		public.POST("/register/", r.ErrorHandler(r.Register))
-	}
-}
-
-func WxRouterInit() {
-	r := v1.GetWxVS()
-	wx := router.Group("/api/public/v1/wx/")
-	{
-		wx.POST("/login/", r.ErrorHandler(r.Login))
-		wx.POST("/get-userinfo/", r.ErrorHandler(r.GetUserInfo))
 	}
 }

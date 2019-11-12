@@ -2,8 +2,9 @@ package model
 
 import (
 	"database/sql"
-	"github.com/go-sql-driver/mysql"
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/jinzhu/gorm"
+	_ "github.com/mattn/go-sqlite3"
 	"go-sso/pkg/log"
 	"gopkg.in/go-playground/validator.v9"
 	"regexp"
@@ -28,10 +29,10 @@ type UserProfile struct {
 	UserID    uint           `gorm:"primary_key"` // OneToOne
 	FirstName sql.NullString `json:"first_name"`
 	LastName  sql.NullString `json:"last_name"`
-	LastLogin mysql.NullTime `json:"last_login"`
+	LastLogin sql.NullTime   `json:"last_login"`
 }
 
-//回调自动创建用户资料
+// 回调自动创建用户资料
 func (user *User) AfterCreate(db *gorm.DB) (err error) {
 	if err = DB.Create(&UserProfile{UserID: user.ID}).Error; err != nil {
 		log.Error(err.Error())
