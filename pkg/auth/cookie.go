@@ -5,8 +5,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/sessions"
 	"go-sso/conf"
-	model2 "go-sso/db/model"
-	"net/http"
+	"go-sso/db/model"
+	"go-sso/pkg/log"
 )
 
 var store = sessions.NewCookieStore([]byte(conf.GetConfig().Common.AppSecret))
@@ -21,9 +21,9 @@ func NewCookieAuthDriver() *cookieAuthManager {
 	}
 }
 
-func (cookie *cookieAuthManager) Check(c *gin.Context) error {
-	// read cookie
-	session, err := store.Get(c.Request, cookie.name)
+func (this *cookieAuthManager) Check(c *gin.Context) error {
+	// read this
+	session, err := store.Get(c.Request, this.name)
 	if err != nil {
 		return errors.New("session invalid")
 	}
@@ -39,33 +39,33 @@ func (cookie *cookieAuthManager) Check(c *gin.Context) error {
 	return nil
 }
 
-func (cookie *cookieAuthManager) User(c *gin.Context) interface{} {
+func (this *cookieAuthManager) User(c *gin.Context) interface{} {
 	// get model user
-	session, err := store.Get(c.Request, cookie.name)
+	session, err := store.Get(c.Request, this.name)
 	if err != nil {
-		return session.Values
+		log.Error(err)
 	}
 	return session.Values
 }
 
-func (cookie *cookieAuthManager) Login(http *http.Request, w http.ResponseWriter, user *model2.User) interface{} {
-	// write cookie
-	session, err := store.Get(http, cookie.name)
+func (this *cookieAuthManager) Login(c *gin.Context, user *model.User) interface{} {
+	// write this
+	session, err := store.Get(c.Request, this.name)
 	if err != nil {
 		return false
 	}
 	session.Values["id"] = user.ID
-	session.Save(http, w)
+	session.Save(c.Request, c.Writer)
 	return true
 }
 
-func (cookie *cookieAuthManager) Logout(http *http.Request, w http.ResponseWriter) bool {
-	// del cookie
-	session, err := store.Get(http, cookie.name)
+func (this *cookieAuthManager) Logout(c *gin.Context) bool {
+	// del this
+	session, err := store.Get(c.Request, this.name)
 	if err != nil {
 		return false
 	}
 	session.Values["id"] = nil
-	session.Save(http, w)
+	session.Save(c.Request, c.Writer)
 	return true
 }

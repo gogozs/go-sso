@@ -1,13 +1,11 @@
 package middlewares
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"go-sso/db/model"
 	"go-sso/pkg/api_error"
 	"go-sso/pkg/auth"
 	"go-sso/service/api/viewset"
-	"net/http"
 )
 
 var driverList = map[string]func() Auth{
@@ -17,13 +15,16 @@ var driverList = map[string]func() Auth{
 	"jwt": func() Auth {
 		return auth.NewJwtAuthDriver()
 	},
+	"token": func() Auth {
+		return auth.NewTokenAuthManager()
+	},
 }
 
 type Auth interface {
-	Check(c *gin.Context) error
-	User(c *gin.Context) interface{}
-	Login(http *http.Request, w http.ResponseWriter, user *model.User) interface{}
-	Logout(http *http.Request, w http.ResponseWriter) bool
+	Check(c *gin.Context) error                         // 校验
+	User(c *gin.Context) interface{}                    // 获取用户
+	Login(c *gin.Context, user *model.User) interface{} // 登录
+	Logout(c *gin.Context) bool                         // 登出
 }
 
 func RegisterGlobalAuthDriver(authKey string, key string) gin.HandlerFunc {
@@ -34,17 +35,28 @@ func RegisterGlobalAuthDriver(authKey string, key string) gin.HandlerFunc {
 	}
 }
 
+type option struct {
+	authList []string
+	prefixes []string
+}
+
 // 支持多种认证
+// authList: 认证方式
+// skipper: 跳过路由
 func AuthMiddleware(authList []string, skipper Skipper, prefixes ...string) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		if skipper(c, prefixes...) {
 			c.Next()
 			return
 		}
+		if len(authList) == 0 {
+			authList = []string{"jwt"} // default
+		}
 		var err error
 		for _, authKey := range authList {
 			driver := GenerateAuthDriver(authKey)
-			if err = (*driver).Check(c); err == nil {
+			if err = driver.Check(c); err == nil {
+				c.Set("authDriver", authKey)
 				c.Next()
 				return
 			}
@@ -60,18 +72,24 @@ func AuthMiddleware(authList []string, skipper Skipper, prefixes ...string) gin.
 	}
 }
 
-func GenerateAuthDriver(s string) *Auth {
-	var authDriver Auth
-	fmt.Println(driverList[s])
-	authDriver = driverList[s]()
-	return &authDriver
+func GenerateAuthDriver(s string) Auth {
+	authDriver := driverList[s]()
+	return authDriver
 }
 
-func GetCurrentUser(c *gin.Context, key string) map[string]interface{} {
-	authDriver, _ := c.MustGet(key).(*Auth)
-	return (*authDriver).User(c).(map[string]interface{})
+// 获取当前用户
+func GetCurrentUser(c *gin.Context) model.User {
+	if authKey, ok := c.Get("authKey"); ok {
+		driver := GenerateAuthDriver(authKey.(string))
+		return driver.User(c).(model.User)
+	}
+	return model.AnonymousUser
 }
 
-func User(c *gin.Context) map[string]interface{} {
-	return GetCurrentUser(c, "jwt_auth")
+// 登出
+func Logout(c *gin.Context) {
+	if authKey, ok := c.Get("authKey"); ok {
+		driver := GenerateAuthDriver(authKey.(string))
+		driver.Logout(c)
+	}
 }

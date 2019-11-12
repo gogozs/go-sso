@@ -66,20 +66,19 @@ func initRouter() *gin.Engine {
 	} else {
 		gin.SetMode(gin.ReleaseMode) // 关闭gin debug
 	}
-	//router.Use(
-	//	middlewares.AuthMiddleware(
-	//		//[]string{"jwt", "cookie"},
-	//		[]string{"jwt"},
-	//		middlewares.CreatePathSkipper(),
-	//		"/api/public/",
-	//	),
-	//)
-	//router.Use(
-	//	middlewares.PermissionMiddleware(
-	//		middlewares.CreatePathSkipper(),
-	//		"/api/public/",
-	//	),
-	//)
+	router.Use(
+		middlewares.AuthMiddleware(
+			[]string{"jwt"},
+			middlewares.CreatePathSkipper(),
+			"/api/public/",
+		),
+	)
+	router.Use(
+		middlewares.PermissionMiddleware(
+			middlewares.CreatePathSkipper(),
+			"/api/public/",
+		),
+	)
 	AuthRouterInit()
 	WxRouterInit()
 	router.Use(middlewares.ErrEmailWriter())

@@ -3,12 +3,11 @@ package auth
 import (
 	"github.com/gin-gonic/gin"
 	"go-sso/conf"
-	model2 "go-sso/db/model"
+	"go-sso/db/model"
 	"go-sso/db/query"
 	"go-sso/pkg/api_error"
 	"go-sso/pkg/log"
 	"go-sso/util"
-	"net/http"
 	"strings"
 	"time"
 )
@@ -29,7 +28,7 @@ func NewJwtAuthDriver() *jwtAuthManager {
 }
 
 // Check the token of request header is valid or not.
-func (jwtAuth *jwtAuthManager) Check(c *gin.Context) error {
+func (this *jwtAuthManager) Check(c *gin.Context) error {
 	token := c.Request.Header.Get("Authorization")
 	token = strings.Replace(token, "Token ", "", -1)
 	if token == "" {
@@ -44,47 +43,33 @@ func (jwtAuth *jwtAuthManager) Check(c *gin.Context) error {
 	user, err := query.UserQ.GetUserByAccount(username)
 	if err != nil {
 		return err
-	} else {
-		c.Set("User", user)
-		return nil
 	}
+	c.Set("User", user)
+	return nil
 }
 
 // 获取user
-func (jwtAuth *jwtAuthManager) User(c *gin.Context) interface{} {
+func (this *jwtAuthManager) User(c *gin.Context) interface{} {
 	if user, exist := c.Get("User"); exist {
 		return user
 	} else {
-		token := c.Request.Header.Get("Authorization")
-		token = strings.Replace(token, "Token ", "", -1)
-		if token == "" {
-			c.Set("User", model2.AnonymousUser)
-			return nil
-		}
-		clamis, err := util.ParseToken(token)
+		err := this.Check(c)
 		if err != nil {
-			log.Error(err.Error())
-			panic(err)
-		} else if time.Now().Unix() > clamis.ExpiresAt {
-			return nil
-		}
-		username := clamis.Username
-		user, err := query.UserQ.GetUserByAccount(username)
-		if err != nil {
+			log.Error(err)
 			panic(err)
 		} else {
-			c.Set("User", user)
+			user, _ := c.Get("User")
 			return user
 		}
 	}
 }
 
-func (jwtAuth *jwtAuthManager) Login(http *http.Request, w http.ResponseWriter, user *model2.User) interface{} {
+func (this *jwtAuthManager) Login(c *gin.Context, user *model.User) interface{} {
 	token, _ := util.GenerateToken(user.Username, user.Password)
 	return token
 }
 
-func (jwtAuth *jwtAuthManager) Logout(http *http.Request, w http.ResponseWriter) bool {
+func (this *jwtAuthManager) Logout(c *gin.Context) bool {
 	// TODO: 逻辑补充
 	return true
 }
