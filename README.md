@@ -1,4 +1,4 @@
-## 微信平台 golang-sdk
+## golang sso
 
 ## project start
 
