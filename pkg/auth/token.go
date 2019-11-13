@@ -68,7 +68,7 @@ func (this *TokenAuthManager) User(c *gin.Context) interface{} {
 
 func (this *TokenAuthManager) Login(c *gin.Context, u *model.User) interface{} {
 	token := this.RandomToken()
-	return token
+	return gin.H{"token": token}
 }
 
 func (this *TokenAuthManager) Logout(c *gin.Context) bool {

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # git
-cd $GO_WEIXIN_WORKDIR
+cd $GO_SSO_WORKDIR
 echo "更新代码..."
 git fetch --all
 # 强制远程分支覆盖本地分支

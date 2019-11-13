@@ -8,14 +8,22 @@ import (
 	"go-sso/service/api/viewset"
 )
 
-var driverList = map[string]func() Auth{
-	"cookie": func() Auth {
+type AuthType string
+
+const (
+	CookieAuth AuthType = "cookie"
+	JwtAuth    AuthType = "jwt"
+	TokenAuth  AuthType = "token"
+)
+
+var driverList = map[AuthType]func() Auth{
+	CookieAuth: func() Auth {
 		return auth.NewCookieAuthDriver()
 	},
-	"jwt": func() Auth {
+	JwtAuth: func() Auth {
 		return auth.NewJwtAuthDriver()
 	},
-	"token": func() Auth {
+	TokenAuth: func() Auth {
 		return auth.NewTokenAuthManager()
 	},
 }
@@ -27,30 +35,18 @@ type Auth interface {
 	Logout(c *gin.Context) bool                         // 登出
 }
 
-func RegisterGlobalAuthDriver(authKey string, key string) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		driver := GenerateAuthDriver(authKey)
-		c.Set(key, driver)
-		c.Next()
-	}
-}
-
-type option struct {
-	authList []string
-	prefixes []string
-}
 
 // 支持多种认证
 // authList: 认证方式
 // skipper: 跳过路由
-func AuthMiddleware(authList []string, skipper Skipper, prefixes ...string) gin.HandlerFunc {
+func AuthMiddleware(authList []AuthType, skipper Skipper, prefixes ...string) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		if skipper(c, prefixes...) {
 			c.Next()
 			return
 		}
 		if len(authList) == 0 {
-			authList = []string{"jwt"} // default
+			authList = []AuthType{TokenAuth} // default
 		}
 		var err error
 		for _, authKey := range authList {
@@ -72,7 +68,7 @@ func AuthMiddleware(authList []string, skipper Skipper, prefixes ...string) gin.
 	}
 }
 
-func GenerateAuthDriver(s string) Auth {
+func GenerateAuthDriver(s AuthType) Auth {
 	authDriver := driverList[s]()
 	return authDriver
 }
@@ -80,7 +76,7 @@ func GenerateAuthDriver(s string) Auth {
 // 获取当前用户
 func GetCurrentUser(c *gin.Context) model.User {
 	if authKey, ok := c.Get("authKey"); ok {
-		driver := GenerateAuthDriver(authKey.(string))
+		driver := GenerateAuthDriver(authKey.(AuthType))
 		return driver.User(c).(model.User)
 	}
 	return model.AnonymousUser
@@ -89,7 +85,7 @@ func GetCurrentUser(c *gin.Context) model.User {
 // 登出
 func Logout(c *gin.Context) {
 	if authKey, ok := c.Get("authKey"); ok {
-		driver := GenerateAuthDriver(authKey.(string))
+		driver := GenerateAuthDriver(authKey.(AuthType))
 		driver.Logout(c)
 	}
 }

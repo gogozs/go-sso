@@ -8,6 +8,7 @@ import (
 	"go-sso/pkg/log"
 	"go-sso/pkg/storage"
 	"go-sso/service/api/viewset"
+	"go-sso/service/middlewares"
 	"go-sso/util"
 )
 
@@ -37,13 +38,11 @@ func (this *AuthViewset) Login(c *gin.Context) (err error) {
 		this.FailResponse(c, api_error.ErrInvalid)
 		return api_error.ErrInvalid
 	} else {
-		if r := this.itemInter.CheckUser(up.Account, up.Password); r {
-			token, err := util.GenerateToken(up.Account, up.Password)
-			if err != nil {
-				return api_error.ErrInternal
-			} else {
-				return this.SuccessResponse(c, gin.H{"token": token})
-			}
+		if u, r := this.itemInter.CheckUser(up.Account, up.Password); r {
+			// 登录方式 token
+			driver := middlewares.GenerateAuthDriver(middlewares.TokenAuth)
+			res := driver.Login(c, u)
+			return this.SuccessResponse(c, res)
 		} else {
 			return api_error.ErrAuth
 		}

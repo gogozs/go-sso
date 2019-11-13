@@ -77,14 +77,14 @@ func (this *UserQuery) Create(item *model.User) (obj *model.User, err error) {
 	return item, err
 }
 
-func (this *UserQuery) CheckUser(account, password string) bool {
+func (this *UserQuery) CheckUser(account, password string) (*model.User, bool) {
 	user, err := this.GetUserByAccount(account)
 	if err != nil {
-		return false
+		return nil, false
 	} else {
 		if err = util.ComparePassword(password, user.Password); err != nil {
-			return false
+			return nil, false
 		}
 	}
-	return true
+	return user, true
 }

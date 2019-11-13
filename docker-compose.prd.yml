@@ -7,6 +7,6 @@ services:
     ports:
       - "8008:8008"
     environment:
-      GO_WEIXIN_WORKDIR: /app
+      GO_SSO_WORKDIR: /app
       gin_env: production
       GIN_MODE: release

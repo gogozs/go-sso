@@ -66,7 +66,7 @@ func (this *jwtAuthManager) User(c *gin.Context) interface{} {
 
 func (this *jwtAuthManager) Login(c *gin.Context, user *model.User) interface{} {
 	token, _ := util.GenerateToken(user.Username, user.Password)
-	return token
+	return gin.H{"token": token}
 }
 
 func (this *jwtAuthManager) Logout(c *gin.Context) bool {

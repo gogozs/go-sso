@@ -68,7 +68,7 @@ func initRouter() *gin.Engine {
 	}
 	router.Use(
 		middlewares.AuthMiddleware(
-			[]string{"jwt"},
+			[]middlewares.AuthType{middlewares.TokenAuth},
 			middlewares.CreatePathSkipper(),
 			"/api/public/",
 		),
