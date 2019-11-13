@@ -35,15 +35,15 @@ func (this *UserQuery) Exists(account, accountType string) bool {
 	var user model.User
 	switch accountType {
 	case "telephone":
-		if err := model.DB.Where("telephone = ", account).Find(&user).Error; err == nil {
+		if err := model.DB.Where("telephone = ?", account).Find(&user).Error; err == nil {
 			return true
 		}
 	case "username":
-		if err := model.DB.Where("username = ", account).Find(&user).Error; err == nil {
+		if err := model.DB.Where("username = ?", account).Find(&user).Error; err == nil {
 			return true
 		}
 	case "email":
-		if err := model.DB.Where("email = ", account).Find(&user).Error; err == nil {
+		if err := model.DB.Where("email = ?", account).Find(&user).Error; err == nil {
 			return true
 		}
 	}

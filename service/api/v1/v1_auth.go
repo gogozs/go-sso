@@ -71,7 +71,7 @@ func (this *AuthViewset) TelephoneLogin(c *gin.Context) (err error) {
 func (this *AuthViewset) Register(c *gin.Context) (err error) {
 	var rp model.RegisterParams
 	var user model.User
-	err = c.ShouldBind(&rp)
+	err = c.BindJSON(&rp)
 	if err != nil {
 		log.Error(err.Error())
 		return err
@@ -106,14 +106,14 @@ func (this *AuthViewset) Register(c *gin.Context) (err error) {
 func (this *AuthViewset) CheckRegisterParams(rp *model.RegisterParams) map[string]string {
 	errs := make(map[string]string)
 	// 检查参数是否合法
-	if this.itemInter.Exists(rp.Username, "username") {
-		errs["username"] = "用户已经存在"
+	if !this.itemInter.IsValid(rp.Username, "username") {
+		errs["username"] = "用户名至少3位以上字母开头"
 	}
-	if this.itemInter.Exists(rp.Telephone, "telephone") {
-		errs["telephone"] = "手机号已经存在"
+	if !this.itemInter.IsValid(rp.Telephone, "telephone") {
+		errs["telephone"] = "手机号格式错误"
 	}
-	if this.itemInter.Exists(rp.Email, "email") {
-		errs["email"] = "email已经存在"
+	if rp.Email != "" && !this.itemInter.IsValid(rp.Email, "email") {
+		errs["email"] = "email格式错误"
 	}
 	if len(errs) > 0 {
 		return errs
@@ -125,7 +125,7 @@ func (this *AuthViewset) CheckRegisterParams(rp *model.RegisterParams) map[strin
 	if this.itemInter.Exists(rp.Telephone, "telephone") {
 		errs["telephone"] = "手机号已经存在"
 	}
-	if this.itemInter.Exists(rp.Email, "email") {
+	if rp.Email != "" && this.itemInter.Exists(rp.Email, "email") {
 		errs["email"] = "email已经存在"
 	}
 	return errs
