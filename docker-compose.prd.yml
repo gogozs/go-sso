@@ -8,5 +8,6 @@ services:
       - "8008:8008"
     environment:
       GO_SSO_WORKDIR: /app
+      service_env: production
       gin_env: production
       GIN_MODE: release
