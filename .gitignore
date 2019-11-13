@@ -24,3 +24,4 @@ test_local.go
 log-files/
 test.db
 conf/production.yml
+build

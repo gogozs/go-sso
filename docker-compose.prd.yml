@@ -13,3 +13,17 @@ services:
       service_env: production
       gin_env: production
       GIN_MODE: release
+
+  rpa_db:
+    image: mysql:5.7
+    container_name: rpa_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: zs
+      MYSQL_USER: zs
+      MYSQL_PASSWORD: zs
+    volumes:
+      - ./build/db/data:/var/lib/mysql
+      - ./build/db/config:/etc/mysql
+    ports:
+      - 3306:3306
