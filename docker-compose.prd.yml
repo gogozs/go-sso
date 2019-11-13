@@ -6,6 +6,8 @@ services:
     restart: always
     ports:
       - "8008:8008"
+    volumes:
+      - ./conf/ /app/conf
     environment:
       GO_SSO_WORKDIR: /app
       service_env: production
