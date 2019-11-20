@@ -66,6 +66,10 @@ func (this *TokenAuthManager) User(c *gin.Context) interface{} {
 func (this *TokenAuthManager) Login(c *gin.Context, u *model.User) interface{} {
 	token := this.RandomToken()
 	cacheStore := storage.GetStore()
+	// single sign on
+	if oldToken, ok := cacheStore.GetCache(u.Username); ok {
+		cacheStore.RemoveCache(oldToken.(string))
+	}
 	cacheStore.SetCache(token, *u)
 	cacheStore.SetCache(u.Username, token)
 	return gin.H{"token": token}
