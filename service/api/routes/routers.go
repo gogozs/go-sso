@@ -89,6 +89,16 @@ func AuthRouterInit() {
 	public := router.Group("/api/public/v1/auth/")
 	{
 		public.POST("/login/", r.ErrorHandler(r.Login))
+		public.POST("/telephone-login/", r.ErrorHandler(r.TelephoneLogin))
 		public.POST("/register/", r.ErrorHandler(r.Register))
+		public.POST("/reset-password/", r.ErrorHandler(r.ResetPassword))
+		public.POST("/send-sms-code/", r.ErrorHandler(r.SendSmsCode))
+		public.POST("/send-email-code/", r.ErrorHandler(r.SendEmailCode))
+		public.POST("/check-telephone-valid/", r.ErrorHandler(r.CheckTelephoneValid))
+		public.POST("/check-telephone-exist/", r.ErrorHandler(r.CheckTelephoneExist))
+	}
+	authGroup := router.Group("/api/v1/auth/")
+	{
+		authGroup.POST("/change-password/", r.ErrorHandler(r.ChangePassword))
 	}
 }

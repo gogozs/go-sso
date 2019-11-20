@@ -8,7 +8,6 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 	"go-sso/pkg/log"
 	"gopkg.in/go-playground/validator.v9"
-	"regexp"
 )
 
 var (
@@ -30,7 +29,7 @@ type UserProfile struct {
 	UserID    uint           `gorm:"primary_key"` // OneToOne
 	FirstName sql.NullString `json:"first_name"`
 	LastName  sql.NullString `json:"last_name"`
-	LastLogin mysql.NullTime   `json:"last_login"`
+	LastLogin mysql.NullTime `json:"last_login"`
 }
 
 // 回调自动创建用户资料
@@ -48,45 +47,45 @@ type UserParams struct {
 }
 
 type RegisterParams struct {
-	Username  string `json:"account" validate:"required"`
+	Username  string `json:"username" validate:"required"`
 	Password  string `json:"password" validate:"required"`
 	Telephone string `json:"telephone" validate:"required"`
 	Email     string `json:"email"`
 }
 
-func usernameFunc(f validator.FieldLevel) bool {
-	if v := f.Field().String(); v == "invalid" {
-		return false
-	} else if b, err := regexp.MatchString(`^1([38][0-9]|14[57]|5[^4])\d{8}$`, v); !b || err != nil {
-		return false
-	}
-	return true
-}
-
-func emailFunc(f validator.FieldLevel) bool {
-	if v := f.Field().String(); v == "invalid" {
-		return false
-	} else if v == "" {
-		return true
-	} else if b, err := regexp.MatchString(`^[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,4}$`, v); !b || err != nil {
-		return false
-	}
-	return true
-}
-
-func telephoneFunc(f validator.FieldLevel) bool {
-	if v := f.Field().String(); v == "invalid" {
-		return false
-	} else if b, err := regexp.MatchString(`^1([38][0-9]|14[57]|5[^4])\d{8}$`, v); !b || err != nil {
-		return false
-	}
-	return true
-}
-
 func (this *RegisterParams) Validate() error {
 	validate := validator.New()
-	//validate.RegisterValidation("username", usernameFunc)
-	//validate.RegisterValidation("telephone", telephoneFunc)
-	//validate.RegisterValidation("email", emailFunc)
+	return validate.Struct(this)
+}
+
+type ChangePasswordParams struct {
+	RawPassword string `json:"raw_password" validate:"required,gte=6"`
+	NewPassword string `json:"new_password" validate:"required,gte=6"`
+}
+
+func (this *ChangePasswordParams) Validate() error {
+	validate := validator.New()
+	return validate.Struct(this)
+}
+
+type ResetPasswordParams struct {
+	Account     string `json:"account" validate:"required"`
+	VerifyType  string `json:"verify_type" validate:"required"`
+	Code        string `json:"code" validate:"required,eq=6"`
+	NewPassword string `json:"new_password" validate:"required,gte=6"`
+}
+
+func (this *ResetPasswordParams) Validate() error {
+	validate := validator.New()
+	return validate.Struct(this)
+}
+
+type TelephoneLoginParams struct {
+	Telephone string `json:"telephone" validate:"required,eq=11"`
+	Code      string `json:"code" validate:"required,eq=6"`
+}
+
+func (this *TelephoneLoginParams) Validate() error {
+	validate := validator.New()
 	return validate.Struct(this)
 }

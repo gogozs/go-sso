@@ -88,3 +88,12 @@ func (this *UserQuery) CheckUser(account, password string) (*model.User, bool) {
 	}
 	return user, true
 }
+
+func (this *UserQuery) ChangePassword(u *model.User, newPassword string) (err error) {
+	u.Password, err = util.GeneratePassword(newPassword)
+	if err != nil {
+		return
+	}
+	err = model.DB.Model(u).Update(*u).Error
+	return
+}

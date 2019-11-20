@@ -52,7 +52,7 @@ func AuthMiddleware(authList []AuthType, skipper Skipper, prefixes ...string) gi
 		for _, authKey := range authList {
 			driver := GenerateAuthDriver(authKey)
 			if err = driver.Check(c); err == nil {
-				c.Set("authDriver", authKey)
+				c.Set("authKey", authKey)
 				c.Next()
 				return
 			}
@@ -74,12 +74,12 @@ func GenerateAuthDriver(s AuthType) Auth {
 }
 
 // 获取当前用户
-func GetCurrentUser(c *gin.Context) model.User {
+func GetCurrentUser(c *gin.Context) *model.User {
 	if authKey, ok := c.Get("authKey"); ok {
 		driver := GenerateAuthDriver(authKey.(AuthType))
-		return driver.User(c).(model.User)
+		return driver.User(c).(*model.User)
 	}
-	return model.AnonymousUser
+	return &model.AnonymousUser
 }
 
 // 登出

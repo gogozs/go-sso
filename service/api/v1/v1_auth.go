@@ -1,10 +1,12 @@
 package v1
 
 import (
+	"errors"
 	"github.com/gin-gonic/gin"
 	"go-sso/db/inter"
 	"go-sso/db/model"
 	"go-sso/pkg/api_error"
+	"go-sso/pkg/email_tool"
 	"go-sso/pkg/log"
 	"go-sso/pkg/storage"
 	"go-sso/service/api/viewset"
@@ -32,7 +34,7 @@ func (this *AuthViewset) ErrorHandler(f func(c *gin.Context) error) func(c *gin.
 // @Router /api/public/v1/auth/login/ [post]
 func (this *AuthViewset) Login(c *gin.Context) (err error) {
 	var up model.UserParams
-	err = c.BindJSON(&up)
+	err = c.ShouldBind(&up)
 	if err != nil {
 		log.Error(err.Error())
 		this.FailResponse(c, api_error.ErrInvalid)
@@ -50,14 +52,27 @@ func (this *AuthViewset) Login(c *gin.Context) (err error) {
 }
 
 // @Summary telephone login
-// @Description 手机验证码登录
+// @Description telephone login steps 1.IsTelephoneExist 2. SendSmsCode 3. TelephoneLogin
 // @Accept  json
 // @Produce  json
 // @Param  user body model.UserParams true "username && password"
 // @Success 200 {object} viewset.Response
-// @Router /api/public/v1/auth/login/ [post]
+// @Router /api/public/v1/auth/telephone/login/ [post]
 func (this *AuthViewset) TelephoneLogin(c *gin.Context) (err error) {
-	return
+	var tl model.TelephoneLoginParams
+	err = c.ShouldBind(&tl)
+	err = this.VerifySmsCode(tl.Telephone, tl.Code)
+	if err != nil {
+		return
+	}
+	// 登录方式 token
+	u, err := this.itemInter.GetUserByAccount(tl.Telephone)
+	if err != nil {
+		return
+	}
+	driver := middlewares.GenerateAuthDriver(middlewares.TokenAuth)
+	res := driver.Login(c, u)
+	return this.SuccessResponse(c, res)
 }
 
 // @Summary user register
@@ -70,7 +85,7 @@ func (this *AuthViewset) TelephoneLogin(c *gin.Context) (err error) {
 func (this *AuthViewset) Register(c *gin.Context) (err error) {
 	var rp model.RegisterParams
 	var user model.User
-	err = c.BindJSON(&rp)
+	err = c.ShouldBind(&rp)
 	if err != nil {
 		log.Error(err.Error())
 		return err
@@ -130,28 +145,81 @@ func (this *AuthViewset) CheckRegisterParams(rp *model.RegisterParams) map[strin
 	return errs
 }
 
+// @Summary 账号注册手机号校验是否合法
+// @Description send telephone verify code
+// @Accept  json
+// @Produce  json
+// @Param  user body model.UserParams true "username && password"
+// @Success 200 {object} viewset.Response
+// @Router /api/public/v1/auth/check-telephone/ [post]
+func (this *AuthViewset) CheckTelephoneValid(c *gin.Context) (err error) {
+	errs := make(map[string]string)
+	// 检查参数是否合法
+	telephone := c.Query("telephone")
+	if !this.itemInter.IsValid(telephone, "telephone") {
+		errs["telephone"] = "手机号格式错误"
+	}
+	if this.itemInter.Exists(telephone, "telephone") {
+		errs["telephone"] = "手机号已经存在"
+	}
+	if len(errs) != 0 {
+		this.FailResponse(c, api_error.ErrInvalid, errs)
+		return
+	}
+	return this.SuccessBlankResponse(c)
+}
+
+// @Summary check telephone
+// @Description check telephone whether exist
+// @Accept  json
+// @Produce  json
+// @Param  user body  true "telephone"
+// @Success 200 {object} viewset.Response
+// @Router /api/public/v1/auth/check-telephone-exist/ [post]
+func (this *AuthViewset) CheckTelephoneExist(c *gin.Context) (err error) {
+	errs := make(map[string]string)
+	// 检查参数是否合法
+	telephone := c.Query("telephone")
+	if !this.itemInter.IsValid(telephone, "telephone") {
+		errs["telephone"] = "手机号格式错误"
+	}
+	if !this.itemInter.Exists(telephone, "telephone") {
+		errs["telephone"] = "手机号不存在"
+	}
+	if len(errs) != 0 {
+		this.FailResponse(c, api_error.ErrInvalid, errs)
+		return
+	}
+	return this.SuccessBlankResponse(c)
+}
+
 // @Summary 发送手机验证码
-// @Description register by username and password
+// @Description send telephone verify code
 // @Accept  json
 // @Produce  json
 // @Param  user body model.UserParams true "username && password"
 // @Success 200 {object} viewset.Response
 // @Router /api/public/v1/auth/register/ [post]
 func (this *AuthViewset) SendSmsCode(c *gin.Context) (err error) {
-	return this.SuccessBlackResponse(c)
+	// TODO 发送短信
+	code := "123456"
+	telephone := c.Query("telephone")
+	if ok := this.itemInter.IsValid(telephone, "telephone"); !ok {
+		return api_error.ErrInvalid
+	}
+	cacheStore := storage.GetStore()
+	cacheStore.SetCache(telephone, code)
+	return this.SuccessBlankResponse(c)
 }
-
 
 // @Summary telephone check
 // @Description 手机验证码确认
-// @Accept  json
-// @Produce  json
-// @Param  user body model.UserParams true "username && password"
-// @Success 200 {object} viewset.Response
-// @Router /api/public/v1/auth/register/ [post]
-func (this *AuthViewset) SmsCodeValid(c *gin.Context) (err error) {
-	// TODO	接口检测
-	return this.SuccessBlackResponse(c)
+func (this *AuthViewset) VerifySmsCode(telephone, code string) (err error) {
+	cacheStore := storage.GetStore()
+	if rightCode, ok := cacheStore.GetCache(telephone); ok && rightCode.(string) == code {
+		return
+	}
+	return nil
 }
 
 // @Summary 发送邮箱验证码
@@ -160,7 +228,7 @@ func (this *AuthViewset) SmsCodeValid(c *gin.Context) (err error) {
 // @Produce  json
 // @Param  user body model.UserParams true "username && password"
 // @Success 200 {object} viewset.Response
-// @Router /api/public/v1/auth/register/ [post]
+// @Router /api/public/v1/auth/send-email-code/ [post]
 func (this *AuthViewset) SendEmailCode(c *gin.Context) (err error) {
 	email := c.Query("email")
 	if ok := this.itemInter.IsValid(email, "email"); !ok {
@@ -168,33 +236,84 @@ func (this *AuthViewset) SendEmailCode(c *gin.Context) (err error) {
 	}
 	cacheStore := storage.GetStore()
 	code := util.RandomCode()
+	err = email_tool.SendEmailCode(code, email)
+	if err != nil {
+		return err
+	}
 	cacheStore.SetCache(email, code)
-	// TODO 发送邮件
-
-	return this.SuccessBlackResponse(c)
+	return this.SuccessResponse(c, gin.H{"url": ""})
 }
 
-// @Summary email check
-// @Description email验证码确认
-// @Accept  json
-// @Produce  json
-// @Param  user body model.UserParams true "username && password"
-// @Success 200 {object} viewset.Response
-// @Router /api/public/v1/auth/register/ [post]
-func (this *AuthViewset) EmailCodeValid(c *gin.Context) (err error) {
-	// TODO	接口检测
-
-	return this.SuccessBlackResponse(c)
+func (this *AuthViewset) VerifyEmailCode(email, code string) (err error) {
+	cacheStore := storage.GetStore()
+	if rightCode, ok := cacheStore.GetCache(email); ok && rightCode.(string) == code {
+		return
+	}
+	return nil
 }
 
 // @Summary 重置密码
-// @Description register by username and password
+// @Description reset password by telephone or email
 // @Accept  json
 // @Produce  json
 // @Param  user body model.UserParams true "username && password"
 // @Success 200 {object} viewset.Response
-// @Router /api/public/v1/auth/register/ [post]
+// @Router /api/public/v1/auth/reset-password/ [post]
 func (this *AuthViewset) ResetPassword(c *gin.Context) (err error) {
+	var rp model.ResetPasswordParams
+	err = c.ShouldBind(&rp)
+	if err != nil {
+		return
+	}
+	user, err := this.itemInter.GetUserByAccount(rp.Account)
+	if err != nil {
+		return
+	}
+	switch rp.VerifyType {
+	case "email":
+		err = this.VerifyEmailCode(user.Email, rp.Code)
+	case "telephone":
+		err = this.VerifySmsCode(user.Telephone, rp.Code)
+	default:
+		err = errors.New("验证类型错误")
+	}
+	if err != nil {
+		return
+	}
+	err = this.itemInter.ChangePassword(user, rp.NewPassword)
+	if err != nil {
+		return
+	}
+	return this.SuccessBlankResponse(c)
+}
 
-	return this.SuccessBlackResponse(c)
+// @Summary 修改密码
+// @Description change password by username and password
+// @Accept  json
+// @Produce  json
+// @Param  user body model.ChangePasswordParams true "raw_password && new_password"
+// @Success 200 {object} viewset.Response
+// @Router /api/v1/auth/change-password/ [post]
+func (this *AuthViewset) ChangePassword(c *gin.Context) (err error) {
+	var cp model.ChangePasswordParams
+	err = c.ShouldBind(&cp)
+	if err != nil {
+		log.Error(err)
+		return err
+	}
+	err = cp.Validate()
+	if err != nil {
+		log.Error(err)
+		return err
+	}
+	username := middlewares.GetCurrentUser(c).Username
+	if u, ok := this.itemInter.CheckUser(username, cp.RawPassword); ok {
+		err = this.itemInter.ChangePassword(u, cp.NewPassword)
+		if err != nil {
+			log.Error(err)
+			return
+		}
+		return this.SuccessBlankResponse(c)
+	}
+	return errors.New("原密码错误")
 }

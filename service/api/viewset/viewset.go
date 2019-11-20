@@ -61,7 +61,7 @@ func (this *ViewSet) SuccessResponse(c *gin.Context, data interface{}) error {
 	return nil
 }
 
-func (this *ViewSet) SuccessBlackResponse(c *gin.Context) error {
+func (this *ViewSet) SuccessBlankResponse(c *gin.Context) error {
 	c.JSON(http.StatusOK, GetSuccessResponse(nil))
 	return nil
 }

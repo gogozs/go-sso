@@ -4,7 +4,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"go-sso/db/model"
 	"go-sso/pkg/api_error"
-	"go-sso/pkg/json"
 	"go-sso/pkg/log"
 	"go-sso/pkg/storage"
 	"math/rand"
@@ -41,11 +40,9 @@ func (this *TokenAuthManager) Check(c *gin.Context) error {
 	cacheStore := storage.GetStore()
 	if v, ok := cacheStore.GetCache(token); ok {
 		var user model.User
-		err := json.Unmarshal(v.([]byte), &user)
-		if err != nil {
-			return err
-		}
-		c.Set("User", user)
+		//err := json.Unmarshal(v.([]byte), &user)
+		user = v.(model.User)
+		c.Set("User", &user)
 		return nil
 	}
 	return api_error.ErrTokenInvalid
@@ -68,6 +65,9 @@ func (this *TokenAuthManager) User(c *gin.Context) interface{} {
 
 func (this *TokenAuthManager) Login(c *gin.Context, u *model.User) interface{} {
 	token := this.RandomToken()
+	cacheStore := storage.GetStore()
+	cacheStore.SetCache(token, *u)
+	cacheStore.SetCache(u.Username, token)
 	return gin.H{"token": token}
 }
 
