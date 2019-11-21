@@ -82,6 +82,7 @@ func TestViewRegister(t *testing.T) {
 }
 
 func TestChangePassword(t *testing.T) {
+	// get token
 	w1 := httptest.NewRecorder()
 	u1, _ := json.Marshal(model.UserParams{username, password})
 	// 构造请求
@@ -92,6 +93,7 @@ func TestChangePassword(t *testing.T) {
 	json.Unmarshal(w1.Body.Bytes(), &m)
 	token := m.Data.(map[string]interface{})["token"].(string)
 
+	// change password
 	w2 := httptest.NewRecorder()
 	newPassword := password + "111"
 	cp := model.ChangePasswordParams{RawPassword: password, NewPassword: newPassword}
@@ -103,6 +105,7 @@ func TestChangePassword(t *testing.T) {
 	assert.Equal(t, 200, w2.Code)
 	fmt.Println(w2.Body)
 
+	// newPassword login
 	w3 := httptest.NewRecorder()
 	u3, _ := json.Marshal(model.UserParams{username, newPassword})
 	req3, _ := http.NewRequest("POST", "/api/public/v1/auth/login/", bytes.NewReader(u3))
