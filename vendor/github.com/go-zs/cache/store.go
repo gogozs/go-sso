@@ -1,7 +1,6 @@
 package cache
 
 import (
-	"container/list"
 	"sync"
 )
 
@@ -10,7 +9,7 @@ const (
 )
 
 type Store struct {
-	l         *list.List
+	l         *queue
 	m         sync.Map
 	maxLength int
 }
@@ -41,7 +40,7 @@ func NewStore(options ...storeOption) *Store {
 		o.apply(&initialOption)
 	}
 	return &Store{
-		l:         list.New(),
+		l:         NewQueue(),
 		m:         sync.Map{},
 		maxLength: initialOption.length,
 	}

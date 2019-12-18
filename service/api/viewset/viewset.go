@@ -15,25 +15,32 @@ type Response struct {
 	Data interface{} `json:"data"`
 }
 
+// handle api error
 func (this *ViewSet) ErrorHandler(f func(c *gin.Context) error, c *gin.Context) {
 	err := f(c)
 	switch err.(type) {
 	case nil:
-	case *api_error.NotFoundError:
+	case api_error.ApiError:
+		this.ErrorResponse(c, err.(api_error.ApiError))
+	default:
+		this.FailResponse(c, api_error.NewError(err))
+	}
+}
+
+// deal error by error code
+func (this *ViewSet) ErrorResponse(c *gin.Context, e api_error.ApiError) {
+	switch e.Code() {
+	case api_error.NotFoundCode:
 		this.NotFoundResponse(c)
 	default:
-		if e, ok := err.(api_error.ApiError); ok {
-			this.FailResponse(c, e)
-		} else {
-			this.FailResponse(c, api_error.NewError(err))
-		}
+		this.FailResponse(c, e)
 	}
 }
 
 func GetSuccessResponse(data interface{}) Response {
 	return Response{
-		Code: api_error.SUCCESS,
-		Msg:  api_error.SUCCESS_MSG,
+		Code: api_error.SuccessCode,
+		Msg:  api_error.SuccessMsg,
 		Data: data,
 	}
 }

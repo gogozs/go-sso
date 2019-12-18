@@ -29,20 +29,3 @@ func (this *BaseError) Error() string {
 func (this *BaseError) GetMsg() string {
 	return this.Error()
 }
-
-type InvalidError struct{ BaseError }
-type InternalError struct{ BaseError }
-type NotFoundError struct{ BaseError }
-type UnauthorizedError struct{ BaseError }
-type PermissionError struct{ BaseError }
-
-// auth
-type AuthError struct{ BaseError }
-type TokenExpired struct{ BaseError }
-type TokenNotValidYet struct{ BaseError }
-type TokenMalformed struct{ BaseError }
-type TokenInvalid struct{ BaseError }
-type SignKey struct{ BaseError }
-
-// challenge
-type InvalidPunch struct{ BaseError }

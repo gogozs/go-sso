@@ -40,7 +40,7 @@ func (s *Store) SetCache(key string, value interface{}) bool {
 			s.l.Remove(s.l.Back())
 		}
 	} else {
-		s.m.Store(c.key, c.value)
+		s.m.Store(c.key, c)
 		s.MoveFront(c)
 	}
 	return true
@@ -70,7 +70,7 @@ func (s *Store) SetExpiredCache(key string, value interface{}, duration time.Dur
 			s.l.Remove(s.l.Back())
 		}
 	} else {
-		s.m.Store(c.key, c.value)
+		s.m.Store(c.key, c)
 		s.MoveFront(c)
 	}
 	return true
