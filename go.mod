@@ -3,8 +3,11 @@ module go-sso
 go 1.12
 
 require (
+	github.com/GiterLab/aliyun-sms-go-sdk v0.0.0-20180108012719-fcc9f11de968 // indirect
+	github.com/GiterLab/urllib v0.0.0-20160731084542-ea0e875f9030 // indirect
 	github.com/Unknwon/com v0.0.0-20190321035513-0fed4efef755
 	github.com/alecthomas/template v0.0.0-20160405071501-a0175ee3bccc
+	github.com/aliyun/alibaba-cloud-sdk-go v1.60.295 // indirect
 	github.com/casbin/casbin v1.9.1
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/gin-contrib/cors v1.3.0
@@ -30,6 +33,7 @@ require (
 	github.com/stretchr/testify v1.4.0
 	github.com/swaggo/gin-swagger v1.2.0
 	github.com/swaggo/swag v1.6.2
+	github.com/tobyzxj/uuid v0.0.0-20140223123307-aa0153c14395 // indirect
 	go.uber.org/zap v1.10.0
 	golang.org/x/crypto v0.0.0-20190701094942-4def268fd1a4
 	golang.org/x/net v0.0.0-20190923162816-aa69164e4478 // indirect

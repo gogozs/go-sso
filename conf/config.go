@@ -18,6 +18,8 @@ type Config struct {
 	Email     EmailConfig
 	Weixin    WeixinConfig
 	Cors      CorsConfig
+	AliConfig AliConfig
+	AliSms    []AliSmsTemplate
 }
 
 type MySQLConfig struct {
@@ -97,6 +99,18 @@ type WeixinConfig struct {
 	GrantType      string
 	EncodingAESKey string // 加密密钥
 	Token          string //官网中配置相同
+}
+
+type AliConfig struct {
+	AccessKey    string
+	AccessSecret string
+}
+
+type AliSmsTemplate struct {
+	TemplateName   string
+	SignName       string
+	TemplateId     string
+	TemplateParams string
 }
 
 func ExeDir() string {

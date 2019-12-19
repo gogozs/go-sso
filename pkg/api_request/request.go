@@ -4,9 +4,9 @@ import (
 	"bytes"
 	"fmt"
 	"go-sso/pkg/json"
+	"go-sso/pkg/log"
 	"io"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"strings"
 )
@@ -34,12 +34,12 @@ func Get(url string, headers map[string]interface{}, params map[string]interface
 	// run http request
 	res, err := client.Do(httpRequest)
 	if err != nil {
-		log.Fatal(err)
+		log.Error(err)
 		panic(err)
 	} else {
 		data, err := ioutil.ReadAll(res.Body)
 		if err != nil {
-			log.Fatal(err)
+			log.Error(err)
 			panic(err)
 		}
 		res.Body = ioutil.NopCloser(bytes.NewBuffer(data)) // io.ReadWriter can only read once
@@ -50,7 +50,7 @@ func Get(url string, headers map[string]interface{}, params map[string]interface
 func Post(url, baseUrl, token string, params map[string]string, body interface{}) *http.Response {
 	b, err := json.Marshal(body)
 	if err != nil {
-		log.Fatal(err)
+		log.Error(err)
 		panic(err)
 	}
 	httpRequest, _ := http.NewRequest("POST", baseUrl+url, strings.NewReader(string(b)))
@@ -70,7 +70,7 @@ func Post(url, baseUrl, token string, params map[string]string, body interface{}
 	// run http request
 	res, err := client.Do(httpRequest)
 	if err != nil {
-		log.Fatal(err)
+		log.Error(err)
 		panic(err)
 	} else {
 		return res
