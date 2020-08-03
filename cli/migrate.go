@@ -6,9 +6,9 @@ import (
 )
 
 var migrateCmd = &cobra.Command{
-	Use: "migrate",
+	Use:   "migrate",
 	Short: "migrate",
-	Long: `database migrate`,
+	Long:  `database migrate`,
 	Run: func(cmd *cobra.Command, args []string) {
 		model.Migrate()
 	},
@@ -17,4 +17,3 @@ var migrateCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(migrateCmd)
 }
-

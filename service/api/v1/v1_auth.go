@@ -5,10 +5,10 @@ import (
 	"github.com/gin-gonic/gin"
 	"go-sso/db/inter"
 	"go-sso/db/model"
-	"go-sso/pkg/api_error"
 	"go-sso/pkg/email_tool"
 	"go-sso/pkg/log"
 	"go-sso/pkg/storage"
+	"go-sso/service/api/api_error"
 	"go-sso/service/api/viewset"
 	"go-sso/service/middlewares"
 	"go-sso/util"
@@ -60,7 +60,9 @@ func (this *AuthViewset) Login(c *gin.Context) (err error) {
 // @Router /api/public/v1/auth/telephone/login/ [post]
 func (this *AuthViewset) TelephoneLogin(c *gin.Context) (err error) {
 	var tl model.TelephoneLoginParams
-	err = c.ShouldBind(&tl)
+	if err = c.ShouldBind(&tl); err != nil {
+		return err
+	}
 	err = this.VerifySmsCode(tl.Telephone, tl.Code)
 	if err != nil {
 		return

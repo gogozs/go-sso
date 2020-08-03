@@ -6,10 +6,10 @@ import (
 )
 
 var (
-	validTestCases = []struct{
-		account string
+	validTestCases = []struct {
+		account     string
 		accountType string
-		expected bool
+		expected    bool
 	}{
 		{"12345", "username", false},
 		{"a12345", "username", true},
@@ -24,9 +24,8 @@ var (
 	}
 )
 
-
 func TestIsValid(t *testing.T) {
-	uq := &UserQuery{}
+	uq := &query{}
 	for _, tc := range validTestCases {
 		assert.Equal(t, uq.IsValid(tc.account, tc.accountType), tc.expected)
 	}

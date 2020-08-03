@@ -7,7 +7,7 @@ require (
 	github.com/GiterLab/urllib v0.0.0-20160731084542-ea0e875f9030 // indirect
 	github.com/Unknwon/com v0.0.0-20190321035513-0fed4efef755
 	github.com/alecthomas/template v0.0.0-20160405071501-a0175ee3bccc
-	github.com/aliyun/alibaba-cloud-sdk-go v1.60.295 // indirect
+	github.com/aliyun/alibaba-cloud-sdk-go v1.60.295
 	github.com/casbin/casbin v1.9.1
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/gin-contrib/cors v1.3.0

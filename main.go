@@ -2,6 +2,8 @@ package main
 
 import (
 	"go-sso/cli"
+	"go-sso/conf"
+	"log"
 )
 
 // @title Swagger Example API
@@ -19,5 +21,8 @@ import (
 // @host petstore.swagger.io
 // @BasePath /v2
 func main() {
+	if err := conf.InitConfig(); err != nil {
+		log.Fatal(err)
+	}
 	cli.Execute()
 }

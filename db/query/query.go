@@ -7,19 +7,15 @@ import (
 	"strconv"
 )
 
-var (
-	UserQ      *UserQuery
-)
-
-func init() {
-	UserQ = &UserQuery{BaseQuery{db: model.DB}}
+func NewQuery(db *gorm.DB) *query {
+	return &query{db: db}
 }
 
-type BaseQuery struct {
+type query struct {
 	db *gorm.DB
 }
 
-func (this *BaseQuery) GetID(id string) uint {
+func (this *query) GetID(id string) uint {
 	idInt, err := strconv.Atoi(id)
 	if err != nil {
 		return 0
@@ -27,7 +23,7 @@ func (this *BaseQuery) GetID(id string) uint {
 	return uint(idInt)
 }
 
-func (this *BaseQuery) InitPageParams(pl ...model.Pagination) (p model.Pagination) {
+func (this *query) InitPageParams(pl ...model.Pagination) (p model.Pagination) {
 	if len(pl) == 0 {
 		p = model.Pagination{
 			PageNum:  1,

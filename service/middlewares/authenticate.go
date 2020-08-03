@@ -3,8 +3,8 @@ package middlewares
 import (
 	"github.com/gin-gonic/gin"
 	"go-sso/db/model"
-	"go-sso/pkg/api_error"
-	"go-sso/pkg/auth"
+	"go-sso/service/api/api_error"
+	"go-sso/service/api/auth"
 	"go-sso/service/api/viewset"
 )
 
@@ -34,7 +34,6 @@ type Auth interface {
 	Login(c *gin.Context, user *model.User) interface{} // 登录
 	Logout(c *gin.Context) bool                         // 登出
 }
-
 
 // 支持多种认证
 // authList: 认证方式

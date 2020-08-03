@@ -8,7 +8,7 @@ import (
 
 // 通用字段
 type BaseModel struct {
-	ID        uint      `json:"id" gorm:"primary_key" gorm:"AUTO_INCREMENT"`
+	ID        uint      `json:"id" gorm:"primary_key,AUTO_INCREMENT"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 }
@@ -25,9 +25,8 @@ const (
 func (u *Status) Scan(value interface{}) error { *u = Status(value.([]byte)); return nil }
 func (u Status) Value() (driver.Value, error)  { return string(u), nil }
 
-
 type Pagination struct {
-	PageNum int `json:"page_num"`
+	PageNum  int `json:"page_num"`
 	PageSize int `json:"page_size"`
 }
 

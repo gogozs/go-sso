@@ -2,7 +2,7 @@ package viewset
 
 import (
 	"github.com/gin-gonic/gin"
-	"go-sso/pkg/api_error"
+	"go-sso/service/api/api_error"
 	"net/http"
 )
 
@@ -18,7 +18,7 @@ type Response struct {
 // handle api error
 func (this *ViewSet) ErrorHandler(f func(c *gin.Context) error, c *gin.Context) {
 	err := f(c)
-	switch err.(type) {
+	switch err := err.(type) {
 	case nil:
 	case api_error.ApiError:
 		this.ErrorResponse(c, err.(api_error.ApiError))
@@ -87,10 +87,8 @@ func (this *ViewSet) SuccessListResponse(c *gin.Context, data interface{}, PageN
 
 func (this *ViewSet) FailResponse(c *gin.Context, err api_error.ApiError, data ...interface{}) {
 	c.JSON(http.StatusBadRequest, GetFailResponse(err, data))
-	return
 }
 
 func (this *ViewSet) NotFoundResponse(c *gin.Context) {
 	c.JSON(http.StatusNotFound, GetFailResponse(api_error.ErrNotFound, nil))
-	return
 }

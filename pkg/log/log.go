@@ -1,12 +1,10 @@
 package log
 
 import (
-	"go-sso/conf"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"
 	"os"
-	"path/filepath"
 	"strings"
 	"time"
 )
@@ -14,7 +12,6 @@ import (
 var (
 	logger *zap.SugaredLogger
 )
-
 
 func Info(args ...interface{}) {
 	logger.Info(args...)
@@ -32,7 +29,7 @@ func Warnf(template string, args ...interface{}) {
 	logger.Warnf(template, args...)
 }
 
-func Error(args ... interface{}) {
+func Error(args ...interface{}) {
 	logger.Error(args...)
 }
 
@@ -42,11 +39,6 @@ func Errorf(template string, args ...interface{}) {
 
 func Panic(args ...interface{}) {
 	logger.Panic(args...)
-}
-
-
-func init() {
-	Logrotate()
 }
 
 func NewEncoderConfig() zapcore.EncoderConfig {
@@ -70,7 +62,7 @@ func TimeEncoder(t time.Time, enc zapcore.PrimitiveArrayEncoder) {
 	enc.AppendString(t.Format("2006-01-02 15:04:05.000"))
 }
 
-func getLevel(s string) (level zapcore.Level){
+func getLevel(s string) (level zapcore.Level) {
 	s = strings.ToUpper(s)
 	switch s {
 	case "DEBUG":
@@ -89,10 +81,7 @@ func getLevel(s string) (level zapcore.Level){
 	return
 }
 
-
-func Logrotate() {
-	c := conf.GetConfig().Common
-	logPath := filepath.Join(conf.ExeDir(), "log-files/", c.LogFile)
+func InitLogger(logPath, level string) {
 	w := zapcore.AddSync(&lumberjack.Logger{
 		Filename:   logPath,
 		MaxSize:    500, // MB
@@ -103,9 +92,9 @@ func Logrotate() {
 		zapcore.NewConsoleEncoder(NewEncoderConfig()),
 		zapcore.NewMultiWriteSyncer(zapcore.AddSync(os.Stdout),
 			w),
-		getLevel(c.Level),
+		getLevel(level),
 	)
 	l := zap.New(core, zap.AddCaller(), zap.AddCallerSkip(1)) // 跳过调用
 	logger = l.Sugar()
-	Info("log level: ", c.Level)
+	Info("log level: ", level)
 }

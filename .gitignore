@@ -17,7 +17,6 @@ test/
 *.log
 conf/local.yml
 conf/production.yml
-cli/cli
 production_build.sh
 local/
 test_local.go

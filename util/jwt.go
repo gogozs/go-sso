@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"go-sso/conf"
-	"go-sso/pkg/api_error"
+	"go-sso/service/api/api_error"
 	"time"
 )
 
@@ -24,7 +24,7 @@ func GenerateToken(username, password string) (string, error) {
 		password,
 		jwt.StandardClaims{
 			ExpiresAt: expiresAt.Unix(),
-			Issuer: "qiuplus",
+			Issuer:    "qiuplus",
 		},
 	}
 	tokenClaims := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
@@ -40,7 +40,7 @@ func ParseToken(token string) (*Claims, error) {
 		if ve, ok := err.(*jwt.ValidationError); ok {
 			if ve.Errors == jwt.ValidationErrorMalformed {
 				return nil, api_error.ErrTokenMalformed
-			} else if ve.Errors == jwt.ValidationErrorExpired  {
+			} else if ve.Errors == jwt.ValidationErrorExpired {
 				// Token is expired
 				return nil, api_error.ErrTokenExpired
 			} else if ve.Errors == jwt.ValidationErrorNotValidYet {

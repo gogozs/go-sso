@@ -7,11 +7,12 @@ import (
 )
 
 func TestRandomCode(t *testing.T) {
-	for i:=0;i<10;i++ {
+	reg, _ := regexp.Compile(`^\d{6}`)
+
+	for i := 0; i < 10; i++ {
 		c := RandomCode()
 		assert.Equal(t, 6, len(c))
-		ok, err := regexp.MatchString(`^\d{6}`, c)
-		assert.Equal(t, nil, err)
+		ok := reg.Match([]byte(c))
 		assert.Equal(t, true, ok)
 	}
 }

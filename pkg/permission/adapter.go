@@ -2,12 +2,12 @@ package permission
 
 import (
 	"errors"
-	"go-sso/conf"
-	"runtime"
 	"github.com/casbin/casbin/model"
 	"github.com/casbin/casbin/persist"
 	"github.com/jinzhu/gorm"
 	"github.com/lib/pq"
+	"go-sso/conf"
+	"runtime"
 )
 
 type CasbinRule struct {
@@ -20,12 +20,12 @@ type CasbinRule struct {
 	V5    string `gorm:"size:100"`
 }
 
-func (c *CasbinRule) TableName() string{
+func (c *CasbinRule) TableName() string {
 	prefix := conf.GetConfig().MySQL.Prefix
 	return prefix + "casbin_rule" //as Gorm keeps table names are plural, and we love consistency
 }
 
-// Adapter represents the Gorm adapter for policy storage.
+// Adapter represents the Gorm adapter for policy db.
 type Adapter struct {
 	driverName     string
 	dataSourceName string
@@ -131,7 +131,7 @@ func (a *Adapter) open() {
 }
 
 func (a *Adapter) close() {
-	a.db.Close()
+	_ = a.db.Close()
 	a.db = nil
 }
 
@@ -246,42 +246,42 @@ func (a *Adapter) SavePolicy(model model.Model) error {
 	return nil
 }
 
-// AddPolicy adds a policy rule to the storage.
+// AddPolicy adds a policy rule to the db.
 func (a *Adapter) AddPolicy(sec string, ptype string, rule []string) error {
 	line := savePolicyLine(ptype, rule)
-	err := a.db.FirstOrInit(&line).Error  // 不存在则创建
+	err := a.db.FirstOrInit(&line).Error // 不存在则创建
 	return err
 }
 
-// RemovePolicy removes a policy rule from the storage.
+// RemovePolicy removes a policy rule from the db.
 func (a *Adapter) RemovePolicy(sec string, ptype string, rule []string) error {
 	line := savePolicyLine(ptype, rule)
 	err := rawDelete(a.db, line) //can't use db.Delete as we're not using primary key http://jinzhu.me/gorm/crud.html#delete
 	return err
 }
 
-// RemoveFilteredPolicy removes policy rules that match the filter from the storage.
+// RemoveFilteredPolicy removes policy rules that match the filter from the db.
 func (a *Adapter) RemoveFilteredPolicy(sec string, ptype string, fieldIndex int, fieldValues ...string) error {
 	line := CasbinRule{}
 
 	line.PType = ptype
-	if fieldIndex <= 0 && 0 < fieldIndex + len(fieldValues) {
-		line.V0 = fieldValues[0 - fieldIndex]
+	if fieldIndex <= 0 && 0 < fieldIndex+len(fieldValues) {
+		line.V0 = fieldValues[0-fieldIndex]
 	}
-	if fieldIndex <= 1 && 1 < fieldIndex + len(fieldValues) {
-		line.V1 = fieldValues[1 - fieldIndex]
+	if fieldIndex <= 1 && 1 < fieldIndex+len(fieldValues) {
+		line.V1 = fieldValues[1-fieldIndex]
 	}
-	if fieldIndex <= 2 && 2 < fieldIndex + len(fieldValues) {
-		line.V2 = fieldValues[2 - fieldIndex]
+	if fieldIndex <= 2 && 2 < fieldIndex+len(fieldValues) {
+		line.V2 = fieldValues[2-fieldIndex]
 	}
-	if fieldIndex <= 3 && 3 < fieldIndex + len(fieldValues) {
-		line.V3 = fieldValues[3 - fieldIndex]
+	if fieldIndex <= 3 && 3 < fieldIndex+len(fieldValues) {
+		line.V3 = fieldValues[3-fieldIndex]
 	}
-	if fieldIndex <= 4 && 4 < fieldIndex + len(fieldValues) {
-		line.V4 = fieldValues[4 - fieldIndex]
+	if fieldIndex <= 4 && 4 < fieldIndex+len(fieldValues) {
+		line.V4 = fieldValues[4-fieldIndex]
 	}
-	if fieldIndex <= 5 && 5 < fieldIndex + len(fieldValues) {
-		line.V5 = fieldValues[5 - fieldIndex]
+	if fieldIndex <= 5 && 5 < fieldIndex+len(fieldValues) {
+		line.V5 = fieldValues[5-fieldIndex]
 	}
 	err := rawDelete(a.db, line)
 	return err

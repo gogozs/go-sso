@@ -1,4 +1,4 @@
-package api_request
+package request
 
 import (
 	"bytes"
@@ -16,12 +16,9 @@ func Get(url string, headers map[string]interface{}, params map[string]interface
 	client := &http.Client{}
 
 	// add headers
-	if headers != nil {
-		for k, v := range headers {
-			httpRequest.Header.Add(k, v.(string))
-		}
-	} else {
-		httpRequest.Header.Add("Content-Type", "application/json")
+	httpRequest.Header.Add("Content-Type", "application/json")
+	for k, v := range headers {
+		httpRequest.Header.Add(k, v.(string))
 	}
 
 	// add url params

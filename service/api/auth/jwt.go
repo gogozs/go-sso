@@ -3,10 +3,10 @@ package auth
 import (
 	"github.com/gin-gonic/gin"
 	"go-sso/conf"
+	"go-sso/db/inter"
 	"go-sso/db/model"
-	"go-sso/db/query"
-	"go-sso/pkg/api_error"
 	"go-sso/pkg/log"
+	"go-sso/service/api/api_error"
 	"go-sso/util"
 	"strings"
 	"time"
@@ -40,7 +40,7 @@ func (this *jwtAuthManager) Check(c *gin.Context) error {
 		return err
 	}
 	username := clamis.Username
-	user, err := query.UserQ.GetUserByAccount(username)
+	user, err := inter.GetDao().GetUserByAccount(username)
 	if err != nil {
 		return err
 	}

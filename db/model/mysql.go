@@ -5,7 +5,6 @@ import (
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
-	"go-sso/conf"
 	"go-sso/pkg/log"
 )
 
@@ -13,7 +12,6 @@ var (
 	DB                                                *gorm.DB
 	err                                               error
 	dbType, dbName, user, password, host, tablePrefix string
-	c                                                 *conf.Config
 )
 
 func Migrate() {
@@ -23,13 +21,18 @@ func Migrate() {
 	)
 }
 
-func init() {
-	c = conf.GetConfig()
-	InitMysql(c.MySQL)
+type MySQLConfig struct {
+	Host     string
+	Username string
+	Password string
+	Port     string
+	Dbname   string
+	Dbtype   string
+	Prefix   string
 }
 
 // 数据库初始化
-func InitMysql(mysql conf.MySQLConfig) {
+func InitMysql(debug bool, mysql MySQLConfig) {
 	dbType = mysql.Dbtype
 	dbName = mysql.Dbname
 	user = mysql.Username
@@ -41,41 +44,28 @@ func InitMysql(mysql conf.MySQLConfig) {
 		user,
 		password,
 		host,
-		dbName, ))
+		dbName))
 
 	if err != nil {
 		log.Error(err.Error())
 	}
-	initDBConfig()
+	initDBConfig(debug)
 }
 
-func InitSqlite() {
-	var err error
-	DB, err = gorm.Open("sqlite3", ":memory:")
-	if conf.GetConfig().Common.Debug {
-		DB.LogMode(true) // 开启 sql 日志
-	}
-	if err != nil {
-		panic(err)
-	}
-	initDBConfig()
-}
-
-func initDBConfig() {
+func initDBConfig(debug bool) {
 	gorm.DefaultTableNameHandler = func(db *gorm.DB, defaultTableName string) string {
 		if defaultTableName == tablePrefix+"casbin_rule" {
 			return defaultTableName
 		}
 		return tablePrefix + defaultTableName
 	}
-	if c.Common.Debug {
+	if debug {
 		DB.LogMode(true) // 开启 sql 日志
 	}
 	DB.SingularTable(true) // 创建table名单数
 	DB.DB().SetMaxIdleConns(10)
 	DB.DB().SetMaxOpenConns(100)
 }
-
 
 func CloseDB() {
 	defer DB.Close()

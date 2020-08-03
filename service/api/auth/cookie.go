@@ -55,7 +55,9 @@ func (this *cookieAuthManager) Login(c *gin.Context, user *model.User) interface
 		return false
 	}
 	session.Values["id"] = user.ID
-	session.Save(c.Request, c.Writer)
+	if err := session.Save(c.Request, c.Writer); err != nil {
+		return false
+	}
 	return true
 }
 
@@ -66,6 +68,8 @@ func (this *cookieAuthManager) Logout(c *gin.Context) bool {
 		return false
 	}
 	session.Values["id"] = nil
-	session.Save(c.Request, c.Writer)
+	if err := session.Save(c.Request, c.Writer); err != nil {
+		return false
+	}
 	return true
 }

@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"github.com/pkg/errors"
 	"go-sso/conf"
-	"go-sso/pkg/api_request"
 	"go-sso/pkg/json"
 	"go-sso/pkg/log"
+	"go-sso/pkg/request"
 	"go-sso/util/encryption"
 )
 
@@ -23,7 +23,7 @@ type LoginResponse struct {
 	OpenId     string `json:"openid"`
 	SessionKey string `json:"session_key"`
 	UnionId    string `json:"unionid"`
-	ErrCode  string `json:"errcode"`
+	ErrCode    string `json:"errcode"`
 	ErrMsg     string `json:"errmsg"`
 }
 
@@ -58,17 +58,16 @@ type LoginParams struct {
 	Code string
 }
 
-
 func (this wxClient) Login(lp *LoginParams) (lr LoginResponse, err error) {
 	url := "https://api.weixin.qq.com/sns/jscode2session"
 	params := map[string]interface{}{
 		"appid":      this.AppId,
 		"secret":     this.Secret,
-		"js_code":     lp.Code,
+		"js_code":    lp.Code,
 		"grant_type": "authorization_code",
 	}
 	fmt.Println(lp.Code)
-	res, statusCode, _ := api_request.Get(url, nil, params)
+	res, statusCode, _ := request.Get(url, nil, params)
 	if statusCode != 200 {
 		err = errors.New(fmt.Sprintf("login request error, status_code: %d", statusCode))
 		log.Error(err)
@@ -96,6 +95,6 @@ func (this *wxClient) getUserInfo(encryptedData, sessionKey, iv string) (*UserIn
 
 func decode(encryptedData, sessionKey, iv string) (string, error) {
 	iv, _ = encryption.Base64Decode(iv)
-	aeskey, _ := encryption.Base64Decode(sessionKey)
-	return encryption.Dncrypt(encryptedData, []byte(aeskey), []byte(iv))
+	aesKey, _ := encryption.Base64Decode(sessionKey)
+	return encryption.Dncrypt(encryptedData, []byte(aesKey), []byte(iv))
 }

@@ -4,8 +4,8 @@ import (
 	"github.com/casbin/casbin"
 	"github.com/gin-gonic/gin"
 	"go-sso/db/model"
-	"go-sso/pkg/api_error"
 	"go-sso/pkg/permission"
+	"go-sso/service/api/api_error"
 	"go-sso/service/api/viewset"
 	"net/http"
 )

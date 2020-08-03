@@ -18,9 +18,9 @@ type User struct {
 	BaseModel
 	Username    string         `json:"username" gorm:"type:varchar(64);unique_index;not null"`
 	Password    string         `json:"password" gorm:"type:varchar(128)"`
-	Telephone   string         `json:"telephone" gorm:"varchar(16)";unique_index`
-	WxId        sql.NullString `json:"wx_id gorm:"type:varchar(64);unique_index`
-	Email       string         `json:"email" gorm:"type:varchar(128);unique_index;sql:"default: ''"`
+	Telephone   string         `json:"telephone" gorm:"varchar(16);unique_index"`
+	WxId        sql.NullString `json:"wx_id" gorm:"type:varchar(64);unique_index"`
+	Email       string         `json:"email" gorm:"type:varchar(128);unique_index" sql:"default: ''"`
 	Role        string         `json:"role" gorm:"default:'viewer'"`
 	UserProfile UserProfile    // OneToOne
 }

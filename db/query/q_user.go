@@ -6,12 +6,8 @@ import (
 	"regexp"
 )
 
-type UserQuery struct {
-	BaseQuery
-}
-
 // 校验用户名是否合法 1.不能有 @  2.不能纯数字
-func (this *UserQuery) IsValid(account, accountType string) bool {
+func (this *query) IsValid(account, accountType string) bool {
 	switch accountType {
 	case "telephone":
 		if b, err := regexp.MatchString(`^1([38][0-9]|14[57]|5[^4])\d{8}$`, account); !b || err != nil {
@@ -31,7 +27,7 @@ func (this *UserQuery) IsValid(account, accountType string) bool {
 }
 
 // 检查是否被占用
-func (this *UserQuery) Exists(account, accountType string) bool {
+func (this *query) Exists(account, accountType string) bool {
 	var user model.User
 	switch accountType {
 	case "telephone":
@@ -50,7 +46,7 @@ func (this *UserQuery) Exists(account, accountType string) bool {
 	return false
 }
 
-func (this *UserQuery) GetUserByAccount(account string) (obj *model.User, err error) {
+func (this *query) GetUserByAccount(account string) (obj *model.User, err error) {
 	obj = &model.User{}
 	if err = model.DB.Where("username = ? OR telephone = ? OR email = ?",
 		account, account, account).First(obj).Error; err != nil {
@@ -60,13 +56,13 @@ func (this *UserQuery) GetUserByAccount(account string) (obj *model.User, err er
 	}
 }
 
-func (this *UserQuery) Get(id string) (obj *model.User, err error) {
+func (this *query) Get(id string) (obj *model.User, err error) {
 	obj = &model.User{}
 	err = this.db.Where("ID = ?", this.GetID(id)).First(obj).Error
 	return
 }
 
-func (this *UserQuery) Create(item *model.User) (obj *model.User, err error) {
+func (this *query) Create(item *model.User) (obj *model.User, err error) {
 	if item.Password != "" {
 		var err error
 		item.Password, err = util.GeneratePassword(item.Password)
@@ -78,7 +74,7 @@ func (this *UserQuery) Create(item *model.User) (obj *model.User, err error) {
 	return item, err
 }
 
-func (this *UserQuery) CheckUser(account, password string) (*model.User, bool) {
+func (this *query) CheckUser(account, password string) (*model.User, bool) {
 	user, err := this.GetUserByAccount(account)
 	if err != nil {
 		return nil, false
@@ -90,7 +86,7 @@ func (this *UserQuery) CheckUser(account, password string) (*model.User, bool) {
 	return user, true
 }
 
-func (this *UserQuery) ChangePassword(u *model.User, newPassword string) (err error) {
+func (this *query) ChangePassword(u *model.User, newPassword string) (err error) {
 	u.Password, err = util.GeneratePassword(newPassword)
 	if err != nil {
 		return

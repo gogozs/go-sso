@@ -3,115 +3,12 @@ package conf
 import (
 	"fmt"
 	"github.com/spf13/viper"
+	"go-sso/db/model"
+	"go-sso/pkg/log"
 	"os"
 	"path"
-	"time"
+	"path/filepath"
 )
-
-type Config struct {
-	MySQL     MySQLConfig
-	TestMysql TestMysqlConfig
-	Cache     CacheConfig
-	Jwt       JwtConfig
-	Cookie    CookieConfig
-	Common    CommonConfig
-	Email     EmailConfig
-	Weixin    WeixinConfig
-	Cors      CorsConfig
-	AliConfig AliConfig
-	AliSms    []AliSmsTemplate
-}
-
-type MySQLConfig struct {
-	Host     string
-	Username string
-	Password string
-	Port     string
-	Dbname   string
-	Dbtype   string
-	Prefix   string
-}
-
-type TestMysqlConfig struct {
-	Host     string
-	Username string
-	Password string
-	Port     string
-	Dbname   string
-	Dbtype   string
-	Prefix   string
-}
-
-type CacheConfig struct {
-	Host        string
-	Password    string
-	Dbname      int
-	MaxIdle     int
-	MaxActive   int
-	IdleTimeout time.Duration
-}
-
-type CorsConfig []string
-
-var config Config
-
-func GetConfig() *Config {
-	return &config
-}
-
-type CommonConfig struct {
-	Debug        bool
-	AppSecret    string
-	TemplatePath string // 静态文件相对路径
-
-	HttpPort     int
-	ReadTimeout  time.Duration
-	WriteTimeout time.Duration
-	PageSize     int
-
-	LogFile string
-	Level   string
-}
-
-// jwt
-type JwtConfig struct {
-	SECRET string
-	EXP    time.Duration // 过期时间
-	ALG    string        // 算法
-}
-
-// cookie
-type CookieConfig struct {
-	NAME string
-}
-
-type EmailConfig struct {
-	Host     string
-	Port     int
-	User     string
-	Password string
-	Admin    []string
-}
-
-type WeixinConfig struct {
-	AppID          string
-	AppSecret      string
-	GrantType      string
-	EncodingAESKey string // 加密密钥
-	Token          string //官网中配置相同
-}
-
-type AliConfig struct {
-	AccessKey    string
-	AccessSecret string
-}
-
-type AliSmsTemplate struct {
-	TemplateName   string
-	SignName       string
-	TemplateId     string
-	TemplateParams string
-}
 
 func ExeDir() string {
 	dir, exists := os.LookupEnv("GO_SSO_WORKDIR")
@@ -133,7 +30,7 @@ func GetConfigPath() string {
 	return confPath
 }
 
-func init() {
+func InitConfig() error {
 	// 需要配置项目根目录的环境变量，方便执行test
 	confPath := GetConfigPath()
 	fmt.Println("配置目录: ", confPath)
@@ -148,8 +45,29 @@ func init() {
 	if err != nil {
 		panic(fmt.Errorf("Fatal error config file: %s \n", err))
 	}
-	err = viper.Unmarshal(&config) // 将配置信息绑定到结构体上
-	if err != nil {
-		panic(err)
+	if err := viper.Unmarshal(&config); err != nil {
+		return err
 	}
+
+	initMysql()
+	initLogger()
+
+	return nil
+}
+
+func initMysql() {
+	model.InitMysql(config.Common.Debug, model.MySQLConfig{
+		Host:     config.MySQL.Host,
+		Username: config.MySQL.Username,
+		Password: config.MySQL.Password,
+		Port:     config.MySQL.Port,
+		Dbname:   config.MySQL.Dbname,
+		Dbtype:   config.MySQL.Dbtype,
+		Prefix:   config.MySQL.Prefix,
+	})
+}
+
+func initLogger() {
+	logPath := filepath.Join(ExeDir(), "log-files/", config.Common.LogFile)
+	log.InitLogger(logPath, config.Common.Level)
 }

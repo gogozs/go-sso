@@ -12,18 +12,12 @@ import (
 	"time"
 )
 
-
 var (
-	router = newRouter()
+	router      = newRouter()
 	swagHandler gin.HandlerFunc
 )
 
-const (
-	path   = "/"
-	pkPath = "/:id/"
-)
-
-func init()  {
+func init() {
 	initRouter()
 }
 

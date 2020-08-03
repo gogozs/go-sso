@@ -11,10 +11,13 @@ import (
 	"io"
 )
 
-func Sha1(data string) string {
+func Sha1(data string) (string, error) {
 	sha1 := sha1.New()
-	sha1.Write([]byte(data))
-	return hex.EncodeToString(sha1.Sum([]byte("")))
+	_, err := sha1.Write([]byte(data))
+	if err != nil {
+		return "", err
+	}
+	return hex.EncodeToString(sha1.Sum([]byte(""))), nil
 }
 
 /*

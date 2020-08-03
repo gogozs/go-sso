@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"go-sso/pkg/email_tool"
+	"go-sso/pkg/log"
 	"net/http"
 	"net/http/httputil"
 	"time"
@@ -18,9 +19,11 @@ func ErrEmailWriter() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		defer func() {
 			if err := recover(); err != nil {
-				httprequest, _ := httputil.DumpRequest(c.Request, false)
-				errMsg := fmt.Sprintf("[Recovery] %s panic recovered:\n%s\n%s", timeFormat(time.Now()), string(httprequest), err)
-				email_tool.SendEmail(nil, "request error", errMsg)
+				httpRequest, _ := httputil.DumpRequest(c.Request, false)
+				errMsg := fmt.Sprintf("[Recovery] %s panic recovered:\n%s\n%s", timeFormat(time.Now()), string(httpRequest), err)
+				if err := email_tool.SendEmail(nil, "request error", errMsg); err != nil {
+					log.Error("send email error %s", err.Error())
+				}
 				c.AbortWithStatus(http.StatusInternalServerError)
 			}
 		}()

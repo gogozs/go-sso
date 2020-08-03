@@ -17,7 +17,7 @@ var rootCmd = &cobra.Command{
 	Use:   "cli",
 	Short: "go-sso cli tool",
 	Long:  `go-sso cli tool`,
-	Run: func(cmd *cobra.Command, args []string) { StartServer() },
+	Run:   func(cmd *cobra.Command, args []string) { StartServer() },
 }
 
 // 启动服务

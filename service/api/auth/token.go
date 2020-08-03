@@ -3,16 +3,16 @@ package auth
 import (
 	"github.com/gin-gonic/gin"
 	"go-sso/db/model"
-	"go-sso/pkg/api_error"
 	"go-sso/pkg/log"
 	"go-sso/pkg/storage"
+	"go-sso/service/api/api_error"
 	"math/rand"
 	"strings"
 )
 
 const (
 	letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-	total = len(letters)
+	total   = len(letters)
 )
 
 type TokenAuthManager struct {
@@ -24,12 +24,11 @@ func NewTokenAuthManager() *TokenAuthManager {
 
 func (this *TokenAuthManager) RandomToken() string {
 	b := make([]byte, 16)
-	for i:=0;i<16;i++ {
+	for i := 0; i < 16; i++ {
 		b[i] = letters[rand.Intn(total)]
 	}
 	return string(b)
 }
-
 
 func (this *TokenAuthManager) Check(c *gin.Context) error {
 	token := c.Request.Header.Get("Authorization")
@@ -39,9 +38,7 @@ func (this *TokenAuthManager) Check(c *gin.Context) error {
 	}
 	cacheStore := storage.GetStore()
 	if v, ok := cacheStore.GetCache(token); ok {
-		var user model.User
-		//err := json.Unmarshal(v.([]byte), &user)
-		user = v.(model.User)
+		user := v.(model.User)
 		c.Set("User", &user)
 		return nil
 	}
