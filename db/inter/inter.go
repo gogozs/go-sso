@@ -13,8 +13,9 @@ var (
 	q IQuery
 )
 
-func InitQuery(db *gorm.DB) {
+func InitQuery(db *gorm.DB) IQuery {
 	q = mysql_query.NewQuery(db)
+	return q
 }
 
 func GetQuery() IQuery {

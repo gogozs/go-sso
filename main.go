@@ -1,7 +1,9 @@
 package main
 
 import (
+	"fmt"
 	"go-sso/cli"
+	"go-sso/db/inter"
 	"go-sso/di"
 	"log"
 )
@@ -22,9 +24,9 @@ import (
 // @BasePath /v2
 func main() {
 	container := di.BuildContainer()
-	err := container.Invoke(di.InitConfig)
-	cli.Execute()
+	err := container.Invoke(di.PrintConfig)
 	if err != nil {
 		log.Fatal(err)
 	}
+	cli.Execute()
 }

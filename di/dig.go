@@ -16,39 +16,38 @@ import (
 )
 
 type DigConfig struct {
-	dig.Out
+	dig.In
 
 	Config *conf.Config
 	DB     *gorm.DB
+	Query  inter.IQuery
 }
 
-func PrintConfig(d *DigConfig) {
-	fmt.Println(d)
+func PrintConfig(config DigConfig) {
+	fmt.Printf("%+v", config)
 }
 
 func BuildContainer() *dig.Container {
 	Container := dig.New()
-	Container.Provide(conf.InitConfig)
-	Container.Provide(initMysql)
-	Container.Provide(initQuery)
+	_ = Container.Provide(conf.InitConfig)
+	_ = Container.Provide(InitConfig)
+	_ = Container.Provide(initQuery)
 	return Container
 }
 
-func InitConfig(config *conf.Config) {
+func InitConfig(config *conf.Config) *gorm.DB {
 	initLogger(config)
 	email_tool.InitEmail(config)
 	wx_client.InitWeixin(config)
 	sms.InitAliConfig(config)
 	routes.InitRouter(config)
-}
-
-func initQuery(db *gorm.DB) {
-	inter.InitQuery(db)
-}
-
-func initMysql(config *conf.Config) *gorm.DB {
 	model.InitMysql(config)
+
 	return model.DB
+}
+
+func initQuery(db *gorm.DB) inter.IQuery {
+	return inter.InitQuery(db)
 }
 
 func initLogger(config *conf.Config) {
