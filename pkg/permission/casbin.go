@@ -14,13 +14,13 @@ var (
 	enforcer *casbin.Enforcer
 )
 
-func GetEnforcer() *casbin.Enforcer {
-	return enforcer
+// 加载权限设置
+func InitPermission(config *conf.Config) {
+	CreateCasbin(config)
 }
 
-// 加载权限设置
-func init() {
-	enforcer = CreateCasbin()
+func GetEnforcer() *casbin.Enforcer {
+	return enforcer
 }
 
 //权限结构
@@ -32,18 +32,17 @@ type CasbinModel struct {
 	Method   string `json:"method"`
 }
 
-
 //添加权限
 func AddCasbin(cm CasbinModel) bool {
 	return enforcer.AddPolicy(cm.RoleName, cm.Path, cm.Method)
 }
 
 //持久化到数据库
-func CreateCasbin() *casbin.Enforcer {
+func CreateCasbin(config *conf.Config) *casbin.Enforcer {
 	var (
 		user, password, host, port, dbname string
 	)
-	mysql := conf.GetConfig().MySQL
+	mysql := config.MySQL
 	user = mysql.Username
 	password = mysql.Password
 	host = mysql.Host
@@ -70,4 +69,3 @@ func CreateCasbin() *casbin.Enforcer {
 	}
 	return e
 }
-

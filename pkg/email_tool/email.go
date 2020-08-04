@@ -14,8 +14,8 @@ var (
 	admin    []string
 )
 
-func init() {
-	e := conf.GetConfig().Email
+func InitEmail(config *conf.Config) {
+	e := config.Email
 	user = e.User
 	password = e.Password
 	host = e.Host

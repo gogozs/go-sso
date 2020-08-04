@@ -2,7 +2,7 @@ package main
 
 import (
 	"go-sso/cli"
-	"go-sso/conf"
+	"go-sso/di"
 	"log"
 )
 
@@ -21,8 +21,10 @@ import (
 // @host petstore.swagger.io
 // @BasePath /v2
 func main() {
-	if err := conf.InitConfig(); err != nil {
+	container := di.BuildContainer()
+	err := container.Invoke(di.InitConfig)
+	cli.Execute()
+	if err != nil {
 		log.Fatal(err)
 	}
-	cli.Execute()
 }

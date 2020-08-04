@@ -9,10 +9,12 @@ func GetAliSmsTmp(name string) *conf.AliSmsTemplate {
 	return aliSms[name]
 }
 
-func init() {
-	aliConfig := conf.GetConfig().AliSms
+func InitAliConfig(config *conf.Config) {
+	aliConfig := config.AliSms
 
 	for _, item := range aliConfig {
 		aliSms[item.TemplateName] = &item
 	}
+
+	InitSms(config)
 }

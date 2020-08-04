@@ -47,12 +47,6 @@ type CacheConfig struct {
 
 type CorsConfig []string
 
-var config Config
-
-func GetConfig() *Config {
-	return &config
-}
-
 type CommonConfig struct {
 	Debug        bool
 	AppSecret    string

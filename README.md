@@ -2,7 +2,7 @@
 
 ## project start
 
-1. 参考config/example_config.yml, 本地新建 config/local.yml
+1. 参考config/example_config.yml, 本地新建 conf/local.yml
 2. export GO_SSO_WORKDIR = <project_path>
 3. go mod tidy
 4. go run main.go
@@ -13,7 +13,7 @@
 1. cli 命令行工具
 ```
 
-go run main.go migreate  # 数据库初始化 需要创建正式数据库以及一个测试数据库
+go run main.go migrate  # 数据库初始化 需要创建正式数据库以及一个测试数据库
 go run main.go createsuperuser username password  # 创建超级用户
 go run main.go refresh_permission  # 更新用户权限
 

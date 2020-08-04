@@ -1,4 +1,4 @@
-package query
+package mysql_query
 
 import (
 	"go-sso/db/model"

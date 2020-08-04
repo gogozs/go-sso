@@ -40,7 +40,7 @@ func (this *jwtAuthManager) Check(c *gin.Context) error {
 		return err
 	}
 	username := clamis.Username
-	user, err := inter.GetDao().GetUserByAccount(username)
+	user, err := inter.GetQuery().GetUserByAccount(username)
 	if err != nil {
 		return err
 	}

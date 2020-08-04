@@ -3,12 +3,15 @@ package conf
 import (
 	"fmt"
 	"github.com/spf13/viper"
-	"go-sso/db/model"
-	"go-sso/pkg/log"
 	"os"
 	"path"
-	"path/filepath"
 )
+
+var config Config
+
+func GetConfig() *Config {
+	return &config
+}
 
 func ExeDir() string {
 	dir, exists := os.LookupEnv("GO_SSO_WORKDIR")
@@ -30,7 +33,7 @@ func GetConfigPath() string {
 	return confPath
 }
 
-func InitConfig() error {
+func InitConfig() (*Config, error) {
 	// 需要配置项目根目录的环境变量，方便执行test
 	confPath := GetConfigPath()
 	fmt.Println("配置目录: ", confPath)
@@ -46,28 +49,8 @@ func InitConfig() error {
 		panic(fmt.Errorf("Fatal error config file: %s \n", err))
 	}
 	if err := viper.Unmarshal(&config); err != nil {
-		return err
+		return nil, err
 	}
 
-	initMysql()
-	initLogger()
-
-	return nil
-}
-
-func initMysql() {
-	model.InitMysql(config.Common.Debug, model.MySQLConfig{
-		Host:     config.MySQL.Host,
-		Username: config.MySQL.Username,
-		Password: config.MySQL.Password,
-		Port:     config.MySQL.Port,
-		Dbname:   config.MySQL.Dbname,
-		Dbtype:   config.MySQL.Dbtype,
-		Prefix:   config.MySQL.Prefix,
-	})
-}
-
-func initLogger() {
-	logPath := filepath.Join(ExeDir(), "log-files/", config.Common.LogFile)
-	log.InitLogger(logPath, config.Common.Level)
+	return &config, nil
 }

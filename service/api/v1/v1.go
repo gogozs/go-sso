@@ -8,7 +8,7 @@ import (
 func GetAuthVS() *AuthViewset {
 	vs := &viewset.ViewSet{}
 	authVS := &AuthViewset{
-		itemInter: inter.GetDao(),
+		itemInter: inter.GetQuery(),
 		ViewSet:   *vs,
 	}
 	return authVS

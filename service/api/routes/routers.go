@@ -17,10 +17,6 @@ var (
 	swagHandler gin.HandlerFunc
 )
 
-func init() {
-	initRouter()
-}
-
 func GetRouter() *gin.Engine {
 	return router
 }
@@ -53,8 +49,8 @@ func newRouter() *gin.Engine {
 	return router
 }
 
-func initRouter() *gin.Engine {
-	c := conf.GetConfig().Common
+func InitRouter(config *conf.Config) *gin.Engine {
+	c := config.Common
 	if c.Debug {
 		crosOrigin()
 	} else {

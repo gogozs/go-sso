@@ -42,8 +42,8 @@ type UserInfo struct {
 	} `json:"watermark"`
 }
 
-func init() {
-	c := conf.GetConfig().Weixin
+func InitWeixin(config *conf.Config) {
+	c := config.Weixin
 	wx = &wxClient{
 		AppId:  c.AppID,
 		Secret: c.AppSecret,

@@ -5,6 +5,7 @@ import (
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
+	"go-sso/conf"
 	"go-sso/pkg/log"
 )
 
@@ -32,7 +33,8 @@ type MySQLConfig struct {
 }
 
 // 数据库初始化
-func InitMysql(debug bool, mysql MySQLConfig) {
+func InitMysql(config *conf.Config) {
+	mysql := config.MySQL
 	dbType = mysql.Dbtype
 	dbName = mysql.Dbname
 	user = mysql.Username
@@ -49,7 +51,7 @@ func InitMysql(debug bool, mysql MySQLConfig) {
 	if err != nil {
 		log.Error(err.Error())
 	}
-	initDBConfig(debug)
+	initDBConfig(config.Common.Debug)
 }
 
 func initDBConfig(debug bool) {

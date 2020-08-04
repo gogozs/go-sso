@@ -14,8 +14,8 @@ const (
 
 var sms Sms
 
-func init() {
-	aliConfig := conf.GetConfig().AliConfig
+func InitSms(config *conf.Config) {
+	aliConfig := config.AliConfig
 	sms = NewAliyunSms(aliConfig.AccessKey, aliConfig.AccessSecret)
 }
 

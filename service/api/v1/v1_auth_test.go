@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"go-sso/db/inter"
 	"go-sso/db/model"
-	"go-sso/db/query"
+	"go-sso/db/mysql_query"
 	"go-sso/pkg/json"
 	"go-sso/pkg/log"
 	"go-sso/service/api/routes"
@@ -47,11 +47,11 @@ var (
 	}
 )
 
-func init() {
+func InitRouter() {
 	router = routes.GetRouter()
-	query.SetupTests() // 初始化mock database
+	mysql_query.SetupTests() // 初始化mock database
 	user = model.User{Username: username, Password: password, Role: "superuser", Telephone: telephone, Email: email}
-	_, err := inter.GetDao().Create(&user)
+	_, err := inter.GetQuery().Create(&user)
 	log.Error(err)
 }
 

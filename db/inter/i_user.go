@@ -4,10 +4,6 @@ import (
 	"go-sso/db/model"
 )
 
-type Dao interface {
-	IUser
-}
-
 type IUser interface {
 	GetUserByAccount(account string) (user *model.User, err error)
 	Get(id string) (obj *model.User, err error)

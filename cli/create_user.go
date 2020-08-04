@@ -27,7 +27,7 @@ func CreateUser(args []string) {
 	username := args[0]
 	password := args[1]
 	user := &model.User{Username: username, Password: password, Role: "superuser"}
-	_, err := inter.GetDao().Create(user)
+	_, err := inter.GetQuery().Create(user)
 	if err != nil {
 		fmt.Println(err)
 	} else {
