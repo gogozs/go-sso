@@ -1,9 +1,7 @@
 package main
 
 import (
-	"fmt"
 	"go-sso/cli"
-	"go-sso/db/inter"
 	"go-sso/di"
 	"log"
 )

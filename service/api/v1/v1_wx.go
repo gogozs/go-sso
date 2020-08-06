@@ -10,13 +10,13 @@ type WxViewset struct {
 	viewset.ViewSet
 }
 
-func (this *WxViewset) ErrorHandler(f func(c *gin.Context) error) func(c *gin.Context) {
+func (a *WxViewset) ErrorHandler(f func(c *gin.Context) error) func(c *gin.Context) {
 	return func(c *gin.Context) {
-		this.ViewSet.ErrorHandler(f, c)
+		a.ViewSet.ErrorHandler(f, c)
 	}
 }
 
-func (this *WxViewset) Login(c *gin.Context) (err error) {
+func (a *WxViewset) Login(c *gin.Context) (err error) {
 	lp := &wx_client.LoginParams{}
 	err = c.ShouldBind(lp)
 	if err != nil {
@@ -27,9 +27,9 @@ func (this *WxViewset) Login(c *gin.Context) (err error) {
 	if err != nil {
 		return
 	}
-	return this.SuccessResponse(c, res)
+	return a.SuccessResponse(c, res)
 }
 
-func (this *WxViewset) GetUserInfo(c *gin.Context) (err error) {
+func (a *WxViewset) GetUserInfo(c *gin.Context) (err error) {
 	return
 }

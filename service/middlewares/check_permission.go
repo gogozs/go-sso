@@ -11,12 +11,12 @@ import (
 )
 
 // NewAuthorizer returns the authorizer, uses a Casbin enforcer as input
-func PermissionMiddleware(skipper Skipper, prefixes ...string) gin.HandlerFunc {
+func PermissionMiddleware(skipper Skipper, m map[string]struct{}, prefixes ...string) gin.HandlerFunc {
 	enforcer := permission.GetEnforcer()
 	pa := &PermissionAuthorizer{enforcer: enforcer}
 
 	return func(c *gin.Context) {
-		if !skipper(c, prefixes...) {
+		if !skipper(c, m, prefixes...) {
 			if !pa.CheckPermission(c) {
 				pa.RequirePermission(c)
 			}

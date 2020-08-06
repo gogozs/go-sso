@@ -5,7 +5,7 @@ import (
 	"go-sso/service/api/viewset"
 )
 
-func GetAuthVS() *AuthViewset {
+func NewAuthViewset() *AuthViewset {
 	vs := &viewset.ViewSet{}
 	authVS := &AuthViewset{
 		itemInter: inter.GetQuery(),

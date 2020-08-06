@@ -5,12 +5,8 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
-	"go-sso/db/inter"
 	"go-sso/db/model"
-	"go-sso/db/mysql_query"
 	"go-sso/pkg/json"
-	"go-sso/pkg/log"
-	"go-sso/service/api/routes"
 	"go-sso/service/api/viewset"
 	"net/http"
 	"net/http/httptest"
@@ -46,14 +42,6 @@ var (
 		{model.RegisterParams{Username: username2, Password: password, Telephone: telephone2}, 200},
 	}
 )
-
-func InitRouter() {
-	router = routes.GetRouter()
-	mysql_query.SetupTests() // 初始化mock database
-	user = model.User{Username: username, Password: password, Role: "superuser", Telephone: telephone, Email: email}
-	_, err := inter.GetQuery().Create(&user)
-	log.Error(err)
-}
 
 func TestViewLogin(t *testing.T) {
 	for _, testCase := range upTestCases {

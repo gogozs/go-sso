@@ -38,9 +38,9 @@ type Auth interface {
 // 支持多种认证
 // authList: 认证方式
 // skipper: 跳过路由
-func AuthMiddleware(authList []AuthType, skipper Skipper, prefixes ...string) gin.HandlerFunc {
+func AuthMiddleware(authList []AuthType, skipper Skipper, m map[string]struct{}, prefixes ...string) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		if skipper(c, prefixes...) {
+		if skipper(c, m, prefixes...) {
 			c.Next()
 			return
 		}

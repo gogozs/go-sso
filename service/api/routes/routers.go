@@ -15,6 +15,8 @@ import (
 var (
 	router      = newRouter()
 	swagHandler gin.HandlerFunc
+
+	pathSkipMap = make(map[string]struct{})
 )
 
 func GetRouter() *gin.Engine {
@@ -60,12 +62,14 @@ func InitRouter(config *conf.Config) *gin.Engine {
 		middlewares.AuthMiddleware(
 			[]middlewares.AuthType{middlewares.TokenAuth},
 			middlewares.CreatePathSkipper(),
+			pathSkipMap,
 			"/api/public/",
 		),
 	)
 	router.Use(
 		middlewares.PermissionMiddleware(
 			middlewares.CreatePathSkipper(),
+			pathSkipMap,
 			"/api/public/",
 		),
 	)
@@ -75,7 +79,7 @@ func InitRouter(config *conf.Config) *gin.Engine {
 }
 
 func AuthRouterInit() {
-	r := v1.GetAuthVS()
+	r := v1.NewAuthViewset()
 	public := router.Group("/api/public/v1/auth/")
 	{
 		public.POST("/login/", r.ErrorHandler(r.Login))

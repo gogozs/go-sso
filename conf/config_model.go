@@ -4,7 +4,7 @@ import "time"
 
 type Config struct {
 	MySQL     MySQLConfig
-	TestMysql TestMysqlConfig
+	TestMysql MySQLConfig
 	Cache     CacheConfig
 	Jwt       JwtConfig
 	Cookie    CookieConfig
@@ -17,16 +17,6 @@ type Config struct {
 }
 
 type MySQLConfig struct {
-	Host     string
-	Username string
-	Password string
-	Port     string
-	Dbname   string
-	Dbtype   string
-	Prefix   string
-}
-
-type TestMysqlConfig struct {
 	Host     string
 	Username string
 	Password string
