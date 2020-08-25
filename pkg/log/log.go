@@ -10,7 +10,8 @@ import (
 )
 
 var (
-	logger *zap.SugaredLogger
+	l, _   = zap.NewDevelopment()
+	logger = l.Sugar()
 )
 
 func Info(args ...interface{}) {

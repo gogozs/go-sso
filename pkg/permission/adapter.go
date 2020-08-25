@@ -130,6 +130,7 @@ func (a *Adapter) open() {
 	a.createTable()
 }
 
+// nolint
 func (a *Adapter) close() {
 	_ = a.db.Close()
 	a.db = nil

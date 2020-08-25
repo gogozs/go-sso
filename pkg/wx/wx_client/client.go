@@ -83,7 +83,7 @@ func (this wxClient) Login(lp *LoginParams) (lr LoginResponse, err error) {
 	return
 }
 
-func (this *wxClient) getUserInfo(encryptedData, sessionKey, iv string) (*UserInfo, error) {
+func (this *wxClient) GetUserInfo(encryptedData, sessionKey, iv string) (*UserInfo, error) {
 	s, err := decode(encryptedData, sessionKey, iv)
 	if err != nil {
 		return nil, err

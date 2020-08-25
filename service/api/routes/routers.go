@@ -13,8 +13,7 @@ import (
 )
 
 var (
-	router      = newRouter()
-	swagHandler gin.HandlerFunc
+	router = newRouter()
 
 	pathSkipMap = make(map[string]struct{})
 )
