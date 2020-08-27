@@ -15,11 +15,15 @@ var (
 	dbType, dbName, user, password, host, tablePrefix string
 )
 
-func Migrate() {
-	DB.AutoMigrate(
+var (
+	TableArr = []interface{}{
 		&User{},
 		&UserProfile{},
-	)
+	}
+)
+
+func Migrate() {
+	DB.AutoMigrate(TableArr...)
 }
 
 type MySQLConfig struct {

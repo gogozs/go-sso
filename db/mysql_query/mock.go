@@ -19,6 +19,5 @@ func SetupTestMysql(c *conf.Config) {
 }
 
 func teardownTests() {
-	model.DB.DropTableIfExists(&model.User{})
-	model.DB.DropTableIfExists(&model.UserProfile{})
+	model.DB.DropTableIfExists(model.TableArr...)
 }

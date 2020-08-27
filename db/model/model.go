@@ -9,8 +9,8 @@ import (
 // 通用字段
 type BaseModel struct {
 	ID        uint      `json:"id" gorm:"primary_key,AUTO_INCREMENT"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
+	CreatedAt time.Time `json:"created_at" gorm:"NOT NULL;default:CURRENT_TIMESTAMP"`
+	UpdatedAt time.Time `json:"updated_at" gorm:"NOT NULL;default:CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"`
 }
 
 // 挑战状态
