@@ -30,6 +30,7 @@ func Get(url string, headers map[string]interface{}, params map[string]interface
 
 	// run http request
 	res, err := client.Do(httpRequest)
+	defer res.Body.Close()
 	if err != nil {
 		log.Error(err)
 		panic(err)
@@ -66,6 +67,7 @@ func Post(url, baseUrl, token string, params map[string]string, body interface{}
 
 	// run http request
 	res, err := client.Do(httpRequest)
+	defer res.Body.Close()
 	if err != nil {
 		log.Error(err)
 		panic(err)
