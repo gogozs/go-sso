@@ -15,7 +15,7 @@ type query struct {
 	db *gorm.DB
 }
 
-func (this *query) GetID(id string) uint {
+func (q *query) GetID(id string) uint {
 	idInt, err := strconv.Atoi(id)
 	if err != nil {
 		return 0
@@ -23,7 +23,7 @@ func (this *query) GetID(id string) uint {
 	return uint(idInt)
 }
 
-func (this *query) InitPageParams(pl ...model.Pagination) (p model.Pagination) {
+func (q *query) InitPageParams(pl ...model.Pagination) (p model.Pagination) {
 	if len(pl) == 0 {
 		p = model.Pagination{
 			PageNum:  1,
