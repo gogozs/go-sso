@@ -67,7 +67,10 @@ func (this wxClient) Login(lp *LoginParams) (lr LoginResponse, err error) {
 		"grant_type": "authorization_code",
 	}
 	fmt.Println(lp.Code)
-	res, statusCode, _ := request.Get(url, nil, params)
+	res, statusCode, _, err := request.Get(url, nil, params)
+	if err != nil {
+		return lr, err
+	}
 	if statusCode != 200 {
 		err = errors.New(fmt.Sprintf("login request error, status_code: %d", statusCode))
 		log.Error(err)

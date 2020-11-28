@@ -22,7 +22,7 @@ func NewTokenAuthManager() *TokenAuthManager {
 	return &TokenAuthManager{}
 }
 
-func (this *TokenAuthManager) RandomToken() string {
+func (a *TokenAuthManager) RandomToken() string {
 	b := make([]byte, 16)
 	for i := 0; i < 16; i++ {
 		b[i] = letters[rand.Intn(total)]
@@ -30,7 +30,7 @@ func (this *TokenAuthManager) RandomToken() string {
 	return string(b)
 }
 
-func (this *TokenAuthManager) Check(c *gin.Context) error {
+func (a *TokenAuthManager) Check(c *gin.Context) error {
 	token := c.Request.Header.Get("Authorization")
 	token = strings.Replace(token, "Token ", "", -1)
 	if token == "" {
@@ -45,11 +45,11 @@ func (this *TokenAuthManager) Check(c *gin.Context) error {
 	return api_error.ErrTokenInvalid
 }
 
-func (this *TokenAuthManager) User(c *gin.Context) interface{} {
+func (a *TokenAuthManager) User(c *gin.Context) interface{} {
 	if user, exist := c.Get("User"); exist {
 		return user
 	} else {
-		err := this.Check(c)
+		err := a.Check(c)
 		if err != nil {
 			log.Error(err)
 			panic(err)
@@ -60,8 +60,8 @@ func (this *TokenAuthManager) User(c *gin.Context) interface{} {
 	}
 }
 
-func (this *TokenAuthManager) Login(c *gin.Context, u *model.User) interface{} {
-	token := this.RandomToken()
+func (a *TokenAuthManager) Login(c *gin.Context, u *model.User) interface{} {
+	token := a.RandomToken()
 	cacheStore := storage.GetStore()
 	// single sign on
 	if oldToken, ok := cacheStore.GetCache(u.Username); ok {
@@ -69,10 +69,10 @@ func (this *TokenAuthManager) Login(c *gin.Context, u *model.User) interface{} {
 	}
 	cacheStore.SetCache(token, *u)
 	cacheStore.SetCache(u.Username, token)
-	return gin.H{"token": token}
+	return gin.H{"token": token, "username": u.Username, "user_id": u.ID}
 }
 
-func (this *TokenAuthManager) Logout(c *gin.Context) bool {
+func (a *TokenAuthManager) Logout(c *gin.Context) bool {
 	token := c.Request.Header.Get("Authorization")
 	token = strings.Replace(token, "Token ", "", -1)
 	cacheStore := storage.GetStore()

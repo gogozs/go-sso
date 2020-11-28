@@ -12,6 +12,7 @@ import (
 	"go-sso/service/api/viewset"
 	"go-sso/service/middlewares"
 	"go-sso/util"
+	"net/http"
 )
 
 type AuthViewset struct {
@@ -39,16 +40,31 @@ func (a *AuthViewset) Login(c *gin.Context) (err error) {
 		log.Error(err.Error())
 		a.FailResponse(c, api_error.ErrInvalid)
 		return api_error.ErrInvalid
-	} else {
-		if u, r := a.itemInter.CheckUser(up.Account, up.Password); r {
-			// 登录方式 token
-			driver := middlewares.GenerateAuthDriver(middlewares.TokenAuth)
-			res := driver.Login(c, u)
-			return a.SuccessResponse(c, res)
-		} else {
-			return api_error.ErrAuth
-		}
 	}
+	u, r := a.itemInter.CheckUser(up.Account, up.Password)
+	if !r {
+		return api_error.ErrAuth
+	}
+	// 登录方式 token
+	driver := middlewares.GenerateAuthDriver(middlewares.TokenAuth)
+	res := driver.Login(c, u)
+
+	query := c.Query("redirect_url")
+	if query != "" {
+		m, ok := res.(map[string]interface{})
+		if !ok {
+			return api_error.ErrInternal
+		}
+		url, err := util.BuildUrlQuery(query, m)
+		if err != nil {
+			log.Errorf("%+v", err)
+			return api_error.ErrInternal
+		}
+		c.Redirect(http.StatusMovedPermanently, url)
+		return nil
+	}
+
+	return a.SuccessResponse(c, res)
 }
 
 // @Summary telephone login

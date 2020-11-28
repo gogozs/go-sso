@@ -11,7 +11,7 @@ import (
 	"strings"
 )
 
-func Get(url string, headers map[string]interface{}, params map[string]interface{}) ([]byte, int, io.ReadCloser) {
+func Get(url string, headers map[string]interface{}, params map[string]interface{}) ([]byte, int, io.ReadCloser, error) {
 	httpRequest, _ := http.NewRequest("GET", url, nil)
 	client := &http.Client{}
 
@@ -30,22 +30,21 @@ func Get(url string, headers map[string]interface{}, params map[string]interface
 
 	// run http request
 	res, err := client.Do(httpRequest)
+	if err != nil {
+		log.Error(err)
+		return nil, 0, nil, err
+	}
 	defer res.Body.Close()
+	data, err := ioutil.ReadAll(res.Body)
 	if err != nil {
 		log.Error(err)
 		panic(err)
-	} else {
-		data, err := ioutil.ReadAll(res.Body)
-		if err != nil {
-			log.Error(err)
-			panic(err)
-		}
-		res.Body = ioutil.NopCloser(bytes.NewBuffer(data)) // io.ReadWriter can only read once
-		return data, res.StatusCode, res.Body
 	}
+	res.Body = ioutil.NopCloser(bytes.NewBuffer(data)) // io.ReadWriter can only read once
+	return data, res.StatusCode, res.Body, nil
 }
 
-func Post(url, baseUrl, token string, params map[string]string, body interface{}) *http.Response {
+func Post(url, baseUrl, token string, params map[string]string, body interface{}) (*http.Response, error) {
 	b, err := json.Marshal(body)
 	if err != nil {
 		log.Error(err)
@@ -67,11 +66,11 @@ func Post(url, baseUrl, token string, params map[string]string, body interface{}
 
 	// run http request
 	res, err := client.Do(httpRequest)
-	defer res.Body.Close()
 	if err != nil {
 		log.Error(err)
-		panic(err)
-	} else {
-		return res
+		return nil, err
 	}
+	defer res.Body.Close()
+
+	return res, nil
 }

@@ -28,7 +28,7 @@ func NewJwtAuthDriver() *jwtAuthManager {
 }
 
 // Check the token of request header is valid or not.
-func (this *jwtAuthManager) Check(c *gin.Context) error {
+func (a *jwtAuthManager) Check(c *gin.Context) error {
 	token := c.Request.Header.Get("Authorization")
 	token = strings.Replace(token, "Token ", "", -1)
 	if token == "" {
@@ -49,11 +49,11 @@ func (this *jwtAuthManager) Check(c *gin.Context) error {
 }
 
 // 获取user
-func (this *jwtAuthManager) User(c *gin.Context) interface{} {
+func (a *jwtAuthManager) User(c *gin.Context) interface{} {
 	if user, exist := c.Get("User"); exist {
 		return user
 	} else {
-		err := this.Check(c)
+		err := a.Check(c)
 		if err != nil {
 			log.Error(err)
 			panic(err)
@@ -64,12 +64,12 @@ func (this *jwtAuthManager) User(c *gin.Context) interface{} {
 	}
 }
 
-func (this *jwtAuthManager) Login(c *gin.Context, user *model.User) interface{} {
+func (a *jwtAuthManager) Login(c *gin.Context, user *model.User) interface{} {
 	token, _ := util.GenerateToken(user.Username, user.Password)
 	return gin.H{"token": token}
 }
 
-func (this *jwtAuthManager) Logout(c *gin.Context) bool {
+func (a *jwtAuthManager) Logout(c *gin.Context) bool {
 	// TODO: 逻辑补充
 	return true
 }
