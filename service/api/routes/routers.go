@@ -6,8 +6,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"go-sso/conf"
 	"go-sso/pkg/log"
+	"go-sso/service/api/middlewares"
 	v1 "go-sso/service/api/v1"
-	"go-sso/service/middlewares"
 	"net/http"
 	"time"
 )

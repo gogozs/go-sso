@@ -1,7 +1,6 @@
 package model
 
 import (
-	"database/sql/driver"
 	"errors"
 	"time"
 )
@@ -12,18 +11,6 @@ type BaseModel struct {
 	CreatedAt time.Time `json:"created_at" gorm:"NOT NULL;default:CURRENT_TIMESTAMP"`
 	UpdatedAt time.Time `json:"updated_at" gorm:"NOT NULL;default:CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"`
 }
-
-// 挑战状态
-type Status string
-
-const (
-	FAILD   Status = "失败"
-	SUCCESS Status = "挑战成功"
-	DOING   Status = "进行中"
-)
-
-func (u *Status) Scan(value interface{}) error { *u = Status(value.([]byte)); return nil }
-func (u Status) Value() (driver.Value, error)  { return string(u), nil }
 
 type Pagination struct {
 	PageNum  int `json:"page_num"`

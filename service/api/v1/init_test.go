@@ -2,10 +2,10 @@ package v1_test
 
 import (
 	"go-sso/conf"
-	"go-sso/db/inter"
-	"go-sso/db/model"
-	"go-sso/db/mysql_query"
+	"go-sso/registry"
 	"go-sso/service/api/routes"
+	"go-sso/storage/mysql/model"
+	"go-sso/storage/mysql/mysql_query"
 	"os"
 	"testing"
 )
@@ -20,7 +20,7 @@ func TestMain(m *testing.M) {
 func SetUp() {
 	c := InitConfig()
 	mysql_query.SetupTests(c) // 初始化mock database
-	inter.InitQuery(model.DB)
+	registry.SetStorage(model.DB)
 	InitRouter(c)
 }
 
@@ -30,7 +30,7 @@ func TearDown() {
 func InitRouter(c *conf.Config) {
 	router = routes.InitRouter(c)
 	user = model.User{Username: username, Password: password, Role: "superuser", Telephone: telephone, Email: email}
-	_, err := inter.GetQuery().Create(&user)
+	_, err := registry.GetStorage().Create(&user)
 	if err != nil {
 		panic(err)
 	}

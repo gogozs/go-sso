@@ -2,7 +2,7 @@ package mysql_query
 
 import (
 	"go-sso/conf"
-	"go-sso/db/model"
+	"go-sso/storage/mysql/model"
 )
 
 // 构建 mock database

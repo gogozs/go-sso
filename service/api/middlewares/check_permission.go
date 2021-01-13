@@ -3,10 +3,10 @@ package middlewares
 import (
 	"github.com/casbin/casbin"
 	"github.com/gin-gonic/gin"
-	"go-sso/db/model"
 	"go-sso/pkg/permission"
 	"go-sso/service/api/api_error"
 	"go-sso/service/api/viewset"
+	"go-sso/storage/mysql/model"
 	"net/http"
 )
 

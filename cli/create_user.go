@@ -4,8 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"github.com/spf13/cobra"
-	"go-sso/db/inter"
-	"go-sso/db/model"
+	"go-sso/registry"
+	"go-sso/storage/mysql/model"
 )
 
 var createUserCmd = &cobra.Command{
@@ -27,7 +27,7 @@ func CreateUser(args []string) {
 	username := args[0]
 	password := args[1]
 	user := &model.User{Username: username, Password: password, Role: "superuser"}
-	_, err := inter.GetQuery().Create(user)
+	_, err := registry.GetStorage().Create(user)
 	if err != nil {
 		fmt.Println(err)
 	} else {

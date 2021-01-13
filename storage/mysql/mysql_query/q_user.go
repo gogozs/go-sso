@@ -1,7 +1,7 @@
 package mysql_query
 
 import (
-	"go-sso/db/model"
+	"go-sso/storage/mysql/model"
 	"go-sso/util"
 	"regexp"
 )

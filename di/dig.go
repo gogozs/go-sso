@@ -4,13 +4,14 @@ import (
 	"fmt"
 	"github.com/jinzhu/gorm"
 	"go-sso/conf"
-	"go-sso/db/inter"
-	"go-sso/db/model"
 	"go-sso/pkg/email_tool"
 	"go-sso/pkg/log"
 	"go-sso/pkg/sms"
 	"go-sso/pkg/wx/wx_client"
+	"go-sso/registry"
 	"go-sso/service/api/routes"
+	"go-sso/storage"
+	"go-sso/storage/mysql/model"
 	"go.uber.org/dig"
 	"path/filepath"
 )
@@ -20,7 +21,7 @@ type DigConfig struct {
 
 	Config *conf.Config
 	DB     *gorm.DB
-	Query  inter.IQuery
+	Query  storage.Storage
 }
 
 func PrintConfig(config DigConfig) {
@@ -46,8 +47,8 @@ func InitConfig(config *conf.Config) *gorm.DB {
 	return model.DB
 }
 
-func initQuery(db *gorm.DB) inter.IQuery {
-	return inter.InitQuery(db)
+func initQuery(db *gorm.DB) storage.Storage {
+	return registry.SetStorage(db)
 }
 
 func initLogger(config *conf.Config) {

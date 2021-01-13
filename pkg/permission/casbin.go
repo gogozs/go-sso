@@ -5,8 +5,8 @@ import (
 	"github.com/casbin/casbin"
 	_ "github.com/go-sql-driver/mysql"
 	"go-sso/conf"
-	"go-sso/db/model"
 	"go-sso/pkg/log"
+	"go-sso/storage/mysql/model"
 	"path/filepath"
 )
 

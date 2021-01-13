@@ -2,10 +2,10 @@ package auth
 
 import (
 	"github.com/gin-gonic/gin"
-	"go-sso/db/model"
 	"go-sso/pkg/log"
 	"go-sso/registry"
 	"go-sso/service/api/api_error"
+	"go-sso/storage/mysql/model"
 	"math/rand"
 	"strings"
 )

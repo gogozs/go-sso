@@ -2,10 +2,10 @@ package middlewares
 
 import (
 	"github.com/gin-gonic/gin"
-	"go-sso/db/model"
 	"go-sso/service/api/api_error"
 	"go-sso/service/api/auth"
 	"go-sso/service/api/viewset"
+	"go-sso/storage/mysql/model"
 )
 
 type AuthType string

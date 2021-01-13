@@ -1,10 +1,10 @@
-package inter
+package storage
 
 import (
-	"go-sso/db/model"
+	"go-sso/storage/mysql/model"
 )
 
-type IUser interface {
+type UserStorage interface {
 	GetUserByAccount(account string) (user *model.User, err error)
 	Get(id string) (obj *model.User, err error)
 	Create(item *model.User) (obj *model.User, err error)

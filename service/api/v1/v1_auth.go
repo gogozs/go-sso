@@ -3,15 +3,14 @@ package v1
 import (
 	"errors"
 	"github.com/gin-gonic/gin"
-	"go-sso/db/inter"
-	"go-sso/db/model"
 	"go-sso/pkg/email_tool"
 	"go-sso/pkg/log"
 	"go-sso/registry"
-	"go-sso/repository/auth"
 	"go-sso/service/api/api_error"
+	"go-sso/service/api/middlewares"
 	"go-sso/service/api/viewset"
-	"go-sso/service/middlewares"
+	"go-sso/service/controller/auth"
+	"go-sso/storage/mysql/model"
 	"go-sso/util"
 	"net/http"
 )
@@ -121,7 +120,7 @@ func (a *AuthViewset) Register(c *gin.Context) (err error) {
 	user.Telephone = rp.Telephone
 	user.Email = rp.Email
 	user.Password = newPassword
-	if _, err = inter.GetQuery().Create(&user); err != nil {
+	if _, err = registry.GetStorage().Create(&user); err != nil {
 		log.Error(err.Error())
 		return err
 	} else {
@@ -133,26 +132,26 @@ func (a *AuthViewset) Register(c *gin.Context) (err error) {
 func (a *AuthViewset) CheckRegisterParams(rp *model.RegisterParams) map[string]string {
 	errs := make(map[string]string)
 	// 检查参数是否合法
-	if !inter.GetQuery().IsValid(rp.Username, "username") {
+	if !registry.GetStorage().IsValid(rp.Username, "username") {
 		errs["username"] = "用户名至少3位以上字母开头"
 	}
-	if !inter.GetQuery().IsValid(rp.Telephone, "telephone") {
+	if !registry.GetStorage().IsValid(rp.Telephone, "telephone") {
 		errs["telephone"] = "手机号格式错误"
 	}
-	if rp.Email != "" && !inter.GetQuery().IsValid(rp.Email, "email") {
+	if rp.Email != "" && !registry.GetStorage().IsValid(rp.Email, "email") {
 		errs["email"] = "email格式错误"
 	}
 	if len(errs) > 0 {
 		return errs
 	}
 	// 检查是否重复注册
-	if inter.GetQuery().Exists(rp.Username, "username") {
+	if registry.GetStorage().Exists(rp.Username, "username") {
 		errs["username"] = "用户已经存在"
 	}
-	if inter.GetQuery().Exists(rp.Telephone, "telephone") {
+	if registry.GetStorage().Exists(rp.Telephone, "telephone") {
 		errs["telephone"] = "手机号已经存在"
 	}
-	if rp.Email != "" && inter.GetQuery().Exists(rp.Email, "email") {
+	if rp.Email != "" && registry.GetStorage().Exists(rp.Email, "email") {
 		errs["email"] = "email已经存在"
 	}
 	return errs
@@ -233,7 +232,7 @@ func (a *AuthViewset) VerifySmsCode(telephone, code string) (err error) {
 // @Router /api/public/v1/auth/send-email-code/ [post]
 func (a *AuthViewset) SendEmailCode(c *gin.Context) (err error) {
 	email := c.Query("email")
-	if ok := inter.GetQuery().IsValid(email, "email"); !ok {
+	if ok := registry.GetStorage().IsValid(email, "email"); !ok {
 		return api_error.ErrInvalid
 	}
 	cacheStore := registry.GetCacheStore()
@@ -267,7 +266,7 @@ func (a *AuthViewset) ResetPassword(c *gin.Context) (err error) {
 	if err != nil {
 		return
 	}
-	user, err := inter.GetQuery().GetUserByAccount(rp.Account)
+	user, err := registry.GetStorage().GetUserByAccount(rp.Account)
 	if err != nil {
 		return
 	}
@@ -282,7 +281,7 @@ func (a *AuthViewset) ResetPassword(c *gin.Context) (err error) {
 	if err != nil {
 		return
 	}
-	err = inter.GetQuery().ChangePassword(user, rp.NewPassword)
+	err = registry.GetStorage().ChangePassword(user, rp.NewPassword)
 	if err != nil {
 		return
 	}
@@ -309,8 +308,8 @@ func (a *AuthViewset) ChangePassword(c *gin.Context) (err error) {
 		return err
 	}
 	username := middlewares.GetCurrentUser(c).Username
-	if u, ok := inter.GetQuery().CheckUser(username, cp.RawPassword); ok {
-		err = inter.GetQuery().ChangePassword(u, cp.NewPassword)
+	if u, ok := registry.GetStorage().CheckUser(username, cp.RawPassword); ok {
+		err = registry.GetStorage().ChangePassword(u, cp.NewPassword)
 		if err != nil {
 			log.Error(err)
 			return

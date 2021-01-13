@@ -5,8 +5,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/sessions"
 	"go-sso/conf"
-	"go-sso/db/model"
 	"go-sso/pkg/log"
+	"go-sso/storage/mysql/model"
 )
 
 var store = sessions.NewCookieStore([]byte(conf.GetConfig().Common.AppSecret))

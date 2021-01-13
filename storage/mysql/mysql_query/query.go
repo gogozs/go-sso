@@ -3,7 +3,7 @@ package mysql_query
 import (
 	"github.com/jinzhu/gorm"
 	"go-sso/conf"
-	"go-sso/db/model"
+	"go-sso/storage/mysql/model"
 	"strconv"
 )
 

@@ -1,16 +1,15 @@
 package auth
 
 import (
-	"go-sso/db/inter"
-	"go-sso/db/model"
 	"go-sso/pkg/json"
 	"go-sso/registry"
 	"go-sso/service/api/api_error"
+	"go-sso/storage/mysql/model"
 	"go-sso/util"
 )
 
 func GetUserByPassword(up model.UserParams) (*model.User, error) {
-	u, r := inter.GetQuery().CheckUser(up.Account, up.Password)
+	u, r := registry.GetStorage().CheckUser(up.Account, up.Password)
 	if !r {
 		return nil, api_error.ErrAuth
 	}
@@ -19,7 +18,7 @@ func GetUserByPassword(up model.UserParams) (*model.User, error) {
 }
 
 func GetUserByTelephone(telephone string) (*model.User, error) {
-	u, err := inter.GetQuery().GetUserByAccount(telephone)
+	u, err := registry.GetStorage().GetUserByAccount(telephone)
 	if err != nil {
 		return nil, api_error.ErrAuth
 	}
@@ -72,10 +71,10 @@ func CheckAuthCode(code string) (*model.User, error) {
 }
 
 func CheckTelephoneValid(telephone string) error {
-	if !inter.GetQuery().IsValid(telephone, "telephone") {
+	if !registry.GetStorage().IsValid(telephone, "telephone") {
 		return api_error.ErrInvalid
 	}
-	if inter.GetQuery().Exists(telephone, "telephone") {
+	if registry.GetStorage().Exists(telephone, "telephone") {
 		return api_error.ErrInvalid
 	}
 
@@ -83,10 +82,10 @@ func CheckTelephoneValid(telephone string) error {
 }
 
 func CheckTelephoneExists(telephone string) error {
-	if !inter.GetQuery().IsValid(telephone, "telephone") {
+	if !registry.GetStorage().IsValid(telephone, "telephone") {
 		return api_error.ErrInvalid
 	}
-	if !inter.GetQuery().Exists(telephone, "telephone") {
+	if !registry.GetStorage().Exists(telephone, "telephone") {
 		return api_error.ErrInvalid
 	}
 
