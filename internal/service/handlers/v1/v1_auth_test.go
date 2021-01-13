@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"go-sso/internal/repository/mysql/model"
 	"go-sso/internal/service/handlers/viewset"
 	"go-sso/pkg/json"
@@ -89,7 +90,7 @@ func TestChangePassword(t *testing.T) {
 	req2.Header.Set("Content-Type", "application/json")
 	req2.Header.Set("Authorization", fmt.Sprintf("Token %s", token))
 	router.ServeHTTP(w2, req2)
-	assert.Equal(t, 200, w2.Code)
+	require.Equal(t, 200, w2.Code)
 	fmt.Println(w2.Body)
 
 	// newPassword login

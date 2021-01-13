@@ -16,7 +16,7 @@ var (
 
 // 加载权限设置
 func InitPermission(config *conf.Config) {
-	CreateCasbin(config)
+	enforcer = CreateCasbin(config)
 }
 
 func GetEnforcer() *casbin.Enforcer {

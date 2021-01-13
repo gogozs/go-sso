@@ -10,6 +10,7 @@ import (
 	"go-sso/internal/service/routers"
 	"go-sso/pkg/email_tool"
 	"go-sso/pkg/log"
+	"go-sso/pkg/permission"
 	"go-sso/pkg/sms"
 	"go-sso/pkg/wx/wx_client"
 	"go.uber.org/dig"
@@ -38,6 +39,7 @@ func BuildContainer() *dig.Container {
 
 func InitConfig(config *conf.Config) *gorm.DB {
 	initLogger(config)
+	permission.InitPermission(config)
 	email_tool.InitEmail(config)
 	wx_client.InitWeixin(config)
 	sms.InitAliConfig(config)

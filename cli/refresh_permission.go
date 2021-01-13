@@ -19,7 +19,6 @@ var permissionCmd = &cobra.Command{
 	},
 }
 
-// TODO 完成权限初始化
 func refreshPermission() {
 	confPath := conf.GetConfigPath()
 	csvFile, err := os.Open(path.Join(confPath, "auth_policy.csv"))
@@ -36,30 +35,35 @@ func refreshPermission() {
 	var (
 		user, password, host, port, dbname string
 	)
-	mysql := conf.GetConfig().MySQL
-	user = mysql.Username
-	password = mysql.Password
-	host = mysql.Host
-	port = mysql.Port
-	dbname = mysql.Dbname
-	table := mysql.Prefix + "casbin_rule"
-
-	db, err := sql.Open("mysql",
-		fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8",
-			user, password, host, port, dbname,
-		))
-	if err != nil {
-		fmt.Println("failed to open database:", err.Error())
-		return
+	mysqlArr := []conf.MySQLConfig{
+		conf.GetConfig().MySQL,
+		conf.GetConfig().TestMysql,
 	}
-	defer db.Close()
-	for _, row := range rows {
-		s1 := fmt.Sprintf(
-			"INSERT INTO %s (p_type, v0, v1, v2) values ('%s', '%s', '%s', '%s');",
-			table, row[0], row[1], row[2], row[3])
-		fmt.Println(s1)
-		_, err := db.Exec(s1)
-		fmt.Println(err)
+	for _, mysql := range mysqlArr {
+		user = mysql.Username
+		password = mysql.Password
+		host = mysql.Host
+		port = mysql.Port
+		dbname = mysql.Dbname
+		table := mysql.Prefix + "casbin_rule"
+
+		db, err := sql.Open("mysql",
+			fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8",
+				user, password, host, port, dbname,
+			))
+		if err != nil {
+			fmt.Println("failed to open database:", err.Error())
+			return
+		}
+		defer db.Close()
+		for _, row := range rows {
+			s1 := fmt.Sprintf(
+				"INSERT INTO %s (p_type, v0, v1, v2) values ('%s', '%s', '%s', '%s');",
+				table, row[0], row[1], row[2], row[3])
+			fmt.Println(s1)
+			_, err := db.Exec(s1)
+			fmt.Println(err)
+		}
 	}
 }
 
