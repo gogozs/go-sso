@@ -4,8 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"github.com/spf13/cobra"
-	"go-sso/registry"
-	"go-sso/storage/mysql/model"
+	"go-sso/internal/registry"
+	"go-sso/internal/repository/mysql/model"
 )
 
 var createUserCmd = &cobra.Command{

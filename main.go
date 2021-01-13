@@ -2,7 +2,7 @@ package main
 
 import (
 	"go-sso/cli"
-	"go-sso/di"
+	"go-sso/conf/di"
 	"log"
 )
 

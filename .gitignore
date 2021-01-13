@@ -24,3 +24,5 @@ log-files/
 test.db
 conf/production.yml
 build
+.DS_Store
+

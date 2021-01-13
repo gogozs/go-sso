@@ -2,7 +2,7 @@ package cli
 
 import (
 	"github.com/spf13/cobra"
-	"go-sso/storage/mysql/model"
+	"go-sso/internal/repository/mysql/model"
 )
 
 var migrateCmd = &cobra.Command{

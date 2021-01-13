@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"go-sso/conf"
-	"go-sso/service/api/api_error"
+	"go-sso/internal/service/apierror"
 	"time"
 )
 
@@ -39,14 +39,14 @@ func ParseToken(token string) (*Claims, error) {
 	if err != nil {
 		if ve, ok := err.(*jwt.ValidationError); ok {
 			if ve.Errors == jwt.ValidationErrorMalformed {
-				return nil, api_error.ErrTokenMalformed
+				return nil, apierror.ErrTokenMalformed
 			} else if ve.Errors == jwt.ValidationErrorExpired {
 				// Token is expired
-				return nil, api_error.ErrTokenExpired
+				return nil, apierror.ErrTokenExpired
 			} else if ve.Errors == jwt.ValidationErrorNotValidYet {
-				return nil, api_error.ErrTokenNotValidYet
+				return nil, apierror.ErrTokenNotValidYet
 			} else {
-				return nil, api_error.ErrTokenInvalid
+				return nil, apierror.ErrTokenInvalid
 			}
 		}
 	}
@@ -57,5 +57,5 @@ func ParseToken(token string) (*Claims, error) {
 			return claims, nil
 		}
 	}
-	return nil, api_error.ErrTokenInvalid
+	return nil, apierror.ErrTokenInvalid
 }

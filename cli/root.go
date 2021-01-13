@@ -5,8 +5,8 @@ import (
 	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"go-sso/internal/service/routers"
 	"go-sso/pkg/log"
-	"go-sso/service/api/routes"
 	"os"
 )
 
@@ -22,7 +22,7 @@ var rootCmd = &cobra.Command{
 
 // 启动服务
 func StartServer() {
-	server := routes.StartServer()
+	server := routers.StartServer()
 	err := server.ListenAndServe()
 	if err != nil {
 		log.Error(err.Error())
