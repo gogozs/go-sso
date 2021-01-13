@@ -8,3 +8,6 @@ lint:
 
 test:
 	go test -v ./...
+
+doc:
+	swag init
