@@ -37,7 +37,7 @@ type MySQLConfig struct {
 }
 
 // 数据库初始化
-func InitMysql(config *conf.Config) {
+func InitMysql(config *conf.Config) *gorm.DB {
 	mysql := config.MySQL
 	dbType = mysql.Dbtype
 	dbName = mysql.Dbname
@@ -56,6 +56,8 @@ func InitMysql(config *conf.Config) {
 		log.Error(err.Error())
 	}
 	initDBConfig(config.Common.Debug)
+
+	return DB
 }
 
 func initDBConfig(debug bool) {

@@ -1,9 +1,8 @@
 package main
 
 import (
-	"go-sso/cli"
+	"go-sso/cmd"
 	"go-sso/conf/di"
-	"log"
 )
 
 // @title Swagger Example API
@@ -22,9 +21,9 @@ import (
 // @BasePath /v2
 func main() {
 	container := di.BuildContainer()
-	err := container.Invoke(di.PrintConfig)
+	err := container.Invoke(di.RunServer)
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
-	cli.Execute()
+	cmd.Execute()
 }

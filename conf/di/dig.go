@@ -1,18 +1,18 @@
 package di
 
 import (
-	"fmt"
+	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 	"go-sso/conf"
-	"go-sso/internal/registry"
 	"go-sso/internal/repository"
 	"go-sso/internal/repository/mysql/model"
-	"go-sso/internal/service/routers"
+	"go-sso/internal/routers"
 	"go-sso/pkg/email_tool"
 	"go-sso/pkg/log"
 	"go-sso/pkg/permission"
 	"go-sso/pkg/sms"
 	"go-sso/pkg/wx/wx_client"
+	"go-sso/registry"
 	"go.uber.org/dig"
 	"path/filepath"
 )
@@ -20,37 +20,27 @@ import (
 type DigConfig struct {
 	dig.In
 
-	Config *conf.Config
-	DB     *gorm.DB
-	Query  repository.Storage
+	Config  *conf.Config
+	DB      *gorm.DB
+	Storage repository.Storage
+	Engine  *gin.Engine `optional:"true"`
 }
 
-func PrintConfig(config DigConfig) {
-	fmt.Printf("%+v", config)
+func RunServer(config DigConfig) {
+	initLogger(config.Config)
+	permission.InitPermission(config.Config)
+	email_tool.InitEmail(config.Config)
+	wx_client.InitWeixin(config.Config)
+	sms.InitAliConfig(config.Config)
 }
 
 func BuildContainer() *dig.Container {
 	Container := dig.New()
 	_ = Container.Provide(conf.InitConfig)
-	_ = Container.Provide(InitConfig)
-	_ = Container.Provide(initQuery)
+	_ = Container.Provide(model.InitMysql)
+	_ = Container.Provide(registry.SetStorage)
+	_ = Container.Provide(routers.InitRouter)
 	return Container
-}
-
-func InitConfig(config *conf.Config) *gorm.DB {
-	initLogger(config)
-	permission.InitPermission(config)
-	email_tool.InitEmail(config)
-	wx_client.InitWeixin(config)
-	sms.InitAliConfig(config)
-	routers.InitRouter(config)
-	model.InitMysql(config)
-
-	return model.DB
-}
-
-func initQuery(db *gorm.DB) repository.Storage {
-	return registry.SetStorage(db)
 }
 
 func initLogger(config *conf.Config) {

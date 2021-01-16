@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"go-sso/conf"
-	"go-sso/internal/service/apierror"
+	"go-sso/internal/apierror"
 	"time"
 )
 
