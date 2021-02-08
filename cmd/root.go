@@ -22,11 +22,7 @@ var rootCmd = &cobra.Command{
 
 // 启动服务
 func StartServer() {
-	server := routers.StartServer()
-	err := server.ListenAndServe()
-	if err != nil {
-		log.Error(err.Error())
-	}
+	routers.StartServer()
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.

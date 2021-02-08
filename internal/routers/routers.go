@@ -1,18 +1,22 @@
 package routers
 
 import (
+	"context"
 	"fmt"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"go-sso/conf"
 	"go-sso/internal/middlewares/auth"
-	"go-sso/internal/middlewares/error_email"
+	"go-sso/internal/middlewares/erroremail"
 	"go-sso/internal/middlewares/permissions"
 	"go-sso/internal/middlewares/skipper"
 	"go-sso/internal/repository/storage"
 	v1 "go-sso/internal/service/v1"
 	"go-sso/pkg/log"
 	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
 	"time"
 )
 
@@ -26,7 +30,7 @@ func GetRouter() *gin.Engine {
 	return router
 }
 
-func StartServer() *http.Server {
+func StartServer() {
 	c := conf.GetConfig().Common
 	server := &http.Server{
 		Addr:           fmt.Sprintf(":%d", c.HttpPort),
@@ -36,7 +40,25 @@ func StartServer() *http.Server {
 		MaxHeaderBytes: 1 << 20,
 	}
 	log.Info(fmt.Sprintf("server start at 0.0.0.0:%d", c.HttpPort))
-	return server
+
+	go func() {
+		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			log.Panic(err)
+		}
+	}()
+
+	// graceful quit
+	quit := make(chan os.Signal)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	<-quit
+	log.Info("Shutdown Server ...")
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	if err := server.Shutdown(ctx); err != nil {
+		log.Panic("Server Shutdown:", err)
+	}
+	log.Info("Server exiting")
 }
 
 // 跨域
@@ -77,7 +99,7 @@ func InitRouter(config *conf.Config, storage storage.Storage) *gin.Engine {
 		),
 	)
 	AuthRouterInit(storage)
-	router.Use(error_email.ErrEmailWriter())
+	router.Use(erroremail.ErrEmailWriter())
 	return router
 }
 

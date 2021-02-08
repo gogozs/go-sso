@@ -1,4 +1,4 @@
-package error_email
+package erroremail
 
 import (
 	"fmt"
