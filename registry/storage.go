@@ -2,19 +2,19 @@ package registry
 
 import (
 	"github.com/jinzhu/gorm"
-	"go-sso/internal/repository"
-	"go-sso/internal/repository/mysql/model"
+	"go-sso/internal/repository/storage"
+	"go-sso/internal/repository/storage/mysql"
 )
 
 var (
-	s repository.Storage
+	s storage.Storage
 )
 
-func SetStorage(db *gorm.DB) repository.Storage {
-	s = model.NewQuery(db)
+func InitStorage(db *gorm.DB) storage.Storage {
+	s = mysql.NewQuery(db)
 	return s
 }
 
-func GetStorage() repository.Storage {
+func GetStorage() storage.Storage {
 	return s
 }

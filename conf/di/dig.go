@@ -4,8 +4,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 	"go-sso/conf"
-	"go-sso/internal/repository"
-	"go-sso/internal/repository/mysql/model"
+	"go-sso/internal/repository/storage"
+	"go-sso/internal/repository/storage/mysql"
 	"go-sso/internal/routers"
 	"go-sso/pkg/email_tool"
 	"go-sso/pkg/log"
@@ -22,7 +22,7 @@ type DigConfig struct {
 
 	Config  *conf.Config
 	DB      *gorm.DB
-	Storage repository.Storage
+	Storage storage.Storage
 	Engine  *gin.Engine `optional:"true"`
 }
 
@@ -37,9 +37,10 @@ func RunServer(config DigConfig) {
 func BuildContainer() *dig.Container {
 	Container := dig.New()
 	_ = Container.Provide(conf.InitConfig)
-	_ = Container.Provide(model.InitMysql)
-	_ = Container.Provide(registry.SetStorage)
+	_ = Container.Provide(mysql.InitMysql)
+	_ = Container.Provide(registry.InitStorage)
 	_ = Container.Provide(routers.InitRouter)
+	_ = Container.Provide(registry.InitCacheClient)
 	return Container
 }
 

@@ -5,25 +5,38 @@ import (
 	"github.com/gin-gonic/gin"
 	"go-sso/internal/apierror"
 	"go-sso/internal/middlewares/auth"
-	"go-sso/internal/repository"
-	"go-sso/internal/repository/mysql/model"
+	"go-sso/internal/model"
+	"go-sso/internal/repository/cache"
+	"go-sso/internal/repository/storage"
+	"go-sso/internal/repository/storage/mysql"
 	"go-sso/internal/service/viewset"
 	"go-sso/pkg/email_tool"
 	"go-sso/pkg/json"
 	"go-sso/pkg/log"
+	"go-sso/pkg/sms"
 	"go-sso/registry"
 	"go-sso/util"
 	"net/http"
+	"time"
+)
+
+const (
+	oauthExpired  = time.Second * 300
+	codeLength    = 12
+	smsCodeLength = 6
 )
 
 type AuthViewset struct {
 	viewset.ViewSet
-	storage repository.Storage
+	storage storage.Storage
+	cache   cache.CacheClient
+	sms     sms.ISms
 }
 
-func NewAuthViewset(storage repository.Storage) AuthViewset {
+func NewAuthViewset(storage storage.Storage) AuthViewset {
 	return AuthViewset{
 		storage: storage,
+		cache:   registry.GetCacheStore(),
 	}
 }
 
@@ -41,7 +54,7 @@ func (v AuthViewset) ErrorHandler(f func(c *gin.Context) error) func(c *gin.Cont
 // @Success 200 {object} viewset.Response
 // @Router /api/public/v1/auth/login/ [post]
 func (v AuthViewset) Login(c *gin.Context) (err error) {
-	var up model.UserParams
+	var up mysql.UserParams
 	err = c.ShouldBind(&up)
 	if err != nil {
 		log.Error(err.Error())
@@ -54,14 +67,17 @@ func (v AuthViewset) Login(c *gin.Context) (err error) {
 	}
 	// 登录方式 token
 	driver := auth.GenerateAuthDriver(auth.TokenAuth)
-	res := driver.Login(c, u)
+	res, err := driver.Login(c, u)
+	if err != nil {
+		return err
+	}
 
 	redirectUrl := c.Query("redirect_url")
 	if redirectUrl == "" {
 		return v.SuccessResponse(c, res)
 	}
 
-	url, err := GenerateOauthUrl(redirectUrl, u)
+	url, err := GenerateOauthUrl(v.cache, redirectUrl, u)
 	if err != nil {
 		return err
 	}
@@ -77,7 +93,7 @@ func (v AuthViewset) Login(c *gin.Context) (err error) {
 // @Success 200 {object} viewset.Response
 // @Router /api/public/v1/auth/telephone/login/ [post]
 func (v AuthViewset) TelephoneLogin(c *gin.Context) (err error) {
-	var tl model.TelephoneLoginParams
+	var tl mysql.TelephoneLoginParams
 	if err = c.ShouldBind(&tl); err != nil {
 		return err
 	}
@@ -91,7 +107,10 @@ func (v AuthViewset) TelephoneLogin(c *gin.Context) (err error) {
 		return
 	}
 	driver := auth.GenerateAuthDriver(auth.TokenAuth)
-	res := driver.Login(c, u)
+	res, err := driver.Login(c, u)
+	if err != nil {
+		return err
+	}
 	return v.SuccessResponse(c, res)
 }
 
@@ -103,8 +122,8 @@ func (v AuthViewset) TelephoneLogin(c *gin.Context) (err error) {
 // @Success 200 {object} viewset.Response
 // @Router /api/public/v1/auth/register/ [post]
 func (v AuthViewset) Register(c *gin.Context) (err error) {
-	var rp model.RegisterParams
-	var user model.User
+	var rp mysql.RegisterParams
+	var user mysql.User
 	err = c.ShouldBind(&rp)
 	if err != nil {
 		log.Error(err.Error())
@@ -137,7 +156,7 @@ func (v AuthViewset) Register(c *gin.Context) (err error) {
 }
 
 // 检测注册用户参数
-func (v AuthViewset) CheckRegisterParams(rp *model.RegisterParams) map[string]string {
+func (v AuthViewset) CheckRegisterParams(rp *mysql.RegisterParams) map[string]string {
 	errs := make(map[string]string)
 	// 检查参数是否合法
 	if !registry.GetStorage().IsValid(rp.Username, "username") {
@@ -209,15 +228,19 @@ func (v AuthViewset) CheckTelephoneExist(c *gin.Context) (err error) {
 // @Success 200 {object} viewset.Response
 // @Router /api/public/v1/auth/register/ [post]
 func (v AuthViewset) SendSmsCode(c *gin.Context) (err error) {
-	// TODO 发送短信
-	code := "123456"
 	telephone := c.Query("telephone")
 	if err := v.checkTelephoneValid(telephone); err != nil {
 		v.FailResponse(c, apierror.ErrInvalid, err)
 		return err
 	}
+	code := util.RandomCode(4)
+	if err := sms.SendLoginSms(v.sms, telephone, code); err != nil {
+		return err
+	}
 	cacheStore := registry.GetCacheStore()
-	cacheStore.SetCache(telephone, code)
+	if err := cacheStore.SetCache(telephone, code); err != nil {
+		return err
+	}
 	return v.SuccessBlankResponse(c)
 }
 
@@ -225,9 +248,14 @@ func (v AuthViewset) SendSmsCode(c *gin.Context) (err error) {
 // @Description 手机验证码确认
 func (v AuthViewset) VerifySmsCode(telephone, code string) (err error) {
 	cacheStore := registry.GetCacheStore()
-	if rightCode, ok := cacheStore.GetCache(telephone); ok && rightCode.(string) == code {
-		return
+	rightCode, err := cacheStore.GetCache(telephone)
+	if err != nil {
+		return err
 	}
+	if rightCode != code {
+		return apierror.NewParamsError("短信验证码错误")
+	}
+
 	return nil
 }
 
@@ -244,19 +272,25 @@ func (v AuthViewset) SendEmailCode(c *gin.Context) (err error) {
 		return apierror.ErrInvalid
 	}
 	cacheStore := registry.GetCacheStore()
-	code := util.RandomCode()
+	code := util.RandomCode(smsCodeLength)
 	err = email_tool.SendEmailCode(code, email)
 	if err != nil {
 		return err
 	}
-	cacheStore.SetCache(email, code)
-	return v.SuccessResponse(c, gin.H{"url": ""})
+	if err := cacheStore.SetCache(email, code); err != nil {
+		return err
+	}
+	return v.SuccessBlankResponse(c)
 }
 
 func (v AuthViewset) VerifyEmailCode(email, code string) (err error) {
 	cacheStore := registry.GetCacheStore()
-	if rightCode, ok := cacheStore.GetCache(email); ok && rightCode.(string) == code {
-		return
+	rightCode, err := cacheStore.GetCache(email)
+	if err != nil {
+		return err
+	}
+	if rightCode != code {
+		return apierror.NewParamsError("邮件验证码错误")
 	}
 	return nil
 }
@@ -269,7 +303,7 @@ func (v AuthViewset) VerifyEmailCode(email, code string) (err error) {
 // @Success 200 {object} viewset.Response
 // @Router /api/public/v1/auth/reset-password/ [post]
 func (v AuthViewset) ResetPassword(c *gin.Context) (err error) {
-	var rp model.ResetPasswordParams
+	var rp mysql.ResetPasswordParams
 	err = c.ShouldBind(&rp)
 	if err != nil {
 		return
@@ -304,7 +338,7 @@ func (v AuthViewset) ResetPassword(c *gin.Context) (err error) {
 // @Success 200 {object} viewset.Response
 // @Router /api/v1/auth/change-password/ [post]
 func (v AuthViewset) ChangePassword(c *gin.Context) (err error) {
-	var cp model.ChangePasswordParams
+	var cp mysql.ChangePasswordParams
 	err = c.ShouldBind(&cp)
 	if err != nil {
 		log.Error(err)
@@ -327,8 +361,36 @@ func (v AuthViewset) ChangePassword(c *gin.Context) (err error) {
 	return errors.New("原密码错误")
 }
 
-func GenerateOauthUrl(url string, u *model.User) (string, error) {
-	code, err := GenerateAuthCode(u)
+// @Summary oauth
+// @Description oauth check
+// @Accept  json
+// @Produce  json
+// @Param  user body model.OauthRequest true "code"
+// @Success 200 {object} model.OauthResponse
+// @Router /api/v1/auth/oauth-check/ [post]
+func (v AuthViewset) CheckOauthCode(c *gin.Context) (err error) {
+	var r model.OauthRequest
+	err = c.ShouldBind(&r)
+	if err != nil {
+		log.Error(err)
+		return err
+	}
+	if r.Code == "" {
+		return apierror.NewParamsError("无效的校验码")
+	}
+	user, err := GetUserByOauthCode(v.cache, r.Code)
+	if err != nil {
+		return err
+	}
+
+	return v.SuccessResponse(c, model.OauthResponse{
+		UserId:   user.ID,
+		Username: user.Username,
+	})
+}
+
+func GenerateOauthUrl(c cache.CacheClient, url string, u *mysql.User) (string, error) {
+	code, err := GenerateAuthCode(c, u)
 	if err != nil {
 		return "", apierror.ErrInternal
 	}
@@ -342,36 +404,36 @@ func GenerateOauthUrl(url string, u *model.User) (string, error) {
 	return url, err
 }
 
-func GenerateAuthCode(u *model.User) (string, error) {
-	code := util.RandomAuthCode()
+func GenerateAuthCode(c cache.CacheClient, u *mysql.User) (string, error) {
+	code := util.RandomCode(codeLength)
 	b, err := json.Marshal(u)
 	if err != nil {
 		return "", err
 	}
-	registry.GetCacheStore().SetCache(code, string(b))
+	if err := c.SetCacheExpired(code, string(b), oauthExpired); err != nil {
+		return "", err
+	}
 
 	return code, nil
 }
 
-func CheckAuthCode(code string) (*model.User, error) {
-	cache, exist := registry.GetCacheStore().GetCache(code)
-	if !exist {
-		return nil, apierror.ErrAuth
+func GetUserByOauthCode(c cache.CacheClient, code string) (u *mysql.User, err error) {
+	v, err := c.GetCache(code)
+	if err != nil {
+		return nil, err
 	}
-	v, ok := cache.(string)
-	if !ok {
-		registry.GetCacheStore().RemoveCache(code)
-		return nil, apierror.ErrAuth
+	if v == "" {
+		return nil, apierror.NewParamsError("无效的校验码")
 	}
-	var u model.User
+	u = &mysql.User{}
 	if err := json.Unmarshal([]byte(v), &u); err != nil {
-		return nil, apierror.ErrAuth
+		return nil, err
 	}
 
-	return &u, nil
+	return u, nil
 }
 
-func (v AuthViewset) getUserByPassword(up model.UserParams) (*model.User, error) {
+func (v AuthViewset) getUserByPassword(up mysql.UserParams) (*mysql.User, error) {
 	u, r := v.storage.GetUser(up.Account, up.Password)
 	if !r {
 		return nil, apierror.ErrAuth
@@ -380,7 +442,7 @@ func (v AuthViewset) getUserByPassword(up model.UserParams) (*model.User, error)
 	return u, nil
 }
 
-func (v AuthViewset) getUserByTelephone(telephone string) (*model.User, error) {
+func (v AuthViewset) getUserByTelephone(telephone string) (*mysql.User, error) {
 	u, err := v.storage.GetUserByAccount(telephone)
 	if err != nil {
 		return nil, apierror.ErrAuth

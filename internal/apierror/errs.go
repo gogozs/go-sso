@@ -1,9 +1,16 @@
 package apierror
 
-func NewError(err error) ApiError {
+func WrapError(err error) ApiError {
 	return &BaseError{
 		code: 10000,
 		msg:  err.Error(),
+	}
+}
+
+func NewParamsError(msg string) ApiError {
+	return &BaseError{
+		code: 400,
+		msg:  msg,
 	}
 }
 

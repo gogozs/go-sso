@@ -16,7 +16,7 @@ type AliyunSms struct {
 	accessKeySecret string
 }
 
-func NewAliyunSms(key, secret string) Sms {
+func NewAliyunSms(key, secret string) ISms {
 	ali.Do(func() {
 		aliyunSms = &AliyunSms{
 			accessKeyId:     key,

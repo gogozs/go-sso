@@ -1,4 +1,4 @@
-package model
+package mysql
 
 import (
 	"database/sql"
@@ -6,6 +6,7 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jinzhu/gorm"
 	_ "github.com/mattn/go-sqlite3"
+	"go-sso/pkg/json"
 	"go-sso/pkg/log"
 	"gopkg.in/go-playground/validator.v9"
 )
@@ -88,4 +89,20 @@ type TelephoneLoginParams struct {
 func (this *TelephoneLoginParams) Validate() error {
 	validate := validator.New()
 	return validate.Struct(this)
+}
+
+func MarshalUser(u *User) (string, error) {
+	v, err := json.Marshal(u)
+	if err != nil {
+		return "", err
+	}
+	return string(v), nil
+}
+
+func UnmarshalUser(s string) (u User, err error) {
+	if err = json.Unmarshal([]byte(s), &u); err != nil {
+		return u, err
+	}
+
+	return u, err
 }

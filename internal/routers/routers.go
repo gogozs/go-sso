@@ -9,7 +9,7 @@ import (
 	"go-sso/internal/middlewares/error_email"
 	"go-sso/internal/middlewares/permissions"
 	"go-sso/internal/middlewares/skipper"
-	"go-sso/internal/repository"
+	"go-sso/internal/repository/storage"
 	v1 "go-sso/internal/service/v1"
 	"go-sso/pkg/log"
 	"net/http"
@@ -54,7 +54,7 @@ func newRouter() *gin.Engine {
 	return router
 }
 
-func InitRouter(config *conf.Config, storage repository.Storage) *gin.Engine {
+func InitRouter(config *conf.Config, storage storage.Storage) *gin.Engine {
 	c := config.Common
 	if c.Debug {
 		crosOrigin()
@@ -81,7 +81,7 @@ func InitRouter(config *conf.Config, storage repository.Storage) *gin.Engine {
 	return router
 }
 
-func AuthRouterInit(storage repository.Storage) {
+func AuthRouterInit(storage storage.Storage) {
 	r := v1.NewAuthViewset(storage)
 	public := router.Group("/api/public/v1/auth/")
 	{

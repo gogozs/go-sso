@@ -4,7 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"go-sso/internal/apierror"
 	"go-sso/internal/middlewares/skipper"
-	"go-sso/internal/repository/mysql/model"
+	"go-sso/internal/repository/storage/mysql"
 	"go-sso/internal/service/viewset"
 )
 
@@ -29,10 +29,10 @@ var driverList = map[AuthType]func() Auth{
 }
 
 type Auth interface {
-	Check(c *gin.Context) error                         // 校验
-	User(c *gin.Context) interface{}                    // 获取用户
-	Login(c *gin.Context, user *model.User) interface{} // 登录
-	Logout(c *gin.Context) bool                         // 登出
+	Check(c *gin.Context) error                                  // 校验
+	User(c *gin.Context) interface{}                             // 获取用户
+	Login(c *gin.Context, user *mysql.User) (interface{}, error) // 登录
+	Logout(c *gin.Context) bool                                  // 登出
 }
 
 // 支持多种认证
@@ -73,12 +73,12 @@ func GenerateAuthDriver(s AuthType) Auth {
 }
 
 // 获取当前用户
-func GetCurrentUser(c *gin.Context) *model.User {
+func GetCurrentUser(c *gin.Context) *mysql.User {
 	if authKey, ok := c.Get("authKey"); ok {
 		driver := GenerateAuthDriver(authKey.(AuthType))
-		return driver.User(c).(*model.User)
+		return driver.User(c).(*mysql.User)
 	}
-	return &model.AnonymousUser
+	return &mysql.AnonymousUser
 }
 
 // 登出

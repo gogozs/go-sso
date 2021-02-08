@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"github.com/spf13/cobra"
-	"go-sso/internal/repository/mysql/model"
+	"go-sso/internal/repository/storage/mysql"
 )
 
 var migrateCmd = &cobra.Command{
@@ -10,7 +10,7 @@ var migrateCmd = &cobra.Command{
 	Short: "migrate",
 	Long:  `database migrate`,
 	Run: func(cmd *cobra.Command, args []string) {
-		model.Migrate()
+		mysql.Migrate()
 	},
 }
 

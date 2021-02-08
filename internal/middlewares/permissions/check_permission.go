@@ -5,7 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"go-sso/internal/apierror"
 	"go-sso/internal/middlewares/skipper"
-	"go-sso/internal/repository/mysql/model"
+	"go-sso/internal/repository/storage/mysql"
 	"go-sso/internal/service/viewset"
 	"go-sso/pkg/permission"
 	"net/http"
@@ -29,8 +29,8 @@ type PermissionAuthorizer struct {
 	enforcer *casbin.Enforcer
 }
 
-func (a *PermissionAuthorizer) GetUser(c *gin.Context) *model.User {
-	user := c.MustGet("User").(*model.User)
+func (a *PermissionAuthorizer) GetUser(c *gin.Context) *mysql.User {
+	user := c.MustGet("User").(*mysql.User)
 	return user
 }
 

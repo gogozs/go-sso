@@ -23,7 +23,7 @@ func (v ViewSet) ErrorHandler(f func(c *gin.Context) error, c *gin.Context) {
 	case apierror.ApiError:
 		v.ErrorResponse(c, err.(apierror.ApiError))
 	default:
-		v.FailResponse(c, apierror.NewError(err))
+		v.FailResponse(c, apierror.WrapError(err))
 	}
 }
 

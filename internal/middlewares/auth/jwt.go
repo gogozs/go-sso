@@ -4,7 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"go-sso/conf"
 	"go-sso/internal/apierror"
-	"go-sso/internal/repository/mysql/model"
+	"go-sso/internal/repository/storage/mysql"
 	"go-sso/pkg/log"
 	"go-sso/registry"
 	"go-sso/util"
@@ -64,9 +64,9 @@ func (a *jwtAuthManager) User(c *gin.Context) interface{} {
 	}
 }
 
-func (a *jwtAuthManager) Login(c *gin.Context, user *model.User) interface{} {
+func (a *jwtAuthManager) Login(c *gin.Context, user *mysql.User) (interface{}, error) {
 	token, _ := util.GenerateToken(user.Username, user.Password)
-	return gin.H{"token": token}
+	return gin.H{"token": token}, nil
 }
 
 func (a *jwtAuthManager) Logout(c *gin.Context) bool {

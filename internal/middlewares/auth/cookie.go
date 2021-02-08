@@ -5,7 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/sessions"
 	"go-sso/conf"
-	"go-sso/internal/repository/mysql/model"
+	"go-sso/internal/repository/storage/mysql"
 	"go-sso/pkg/log"
 )
 
@@ -21,9 +21,9 @@ func NewCookieAuthDriver() *cookieAuthManager {
 	}
 }
 
-func (this *cookieAuthManager) Check(c *gin.Context) error {
-	// read this
-	session, err := store.Get(c.Request, this.name)
+func (a *cookieAuthManager) Check(c *gin.Context) error {
+	// read a
+	session, err := store.Get(c.Request, a.name)
 	if err != nil {
 		return errors.New("session invalid")
 	}
@@ -39,31 +39,31 @@ func (this *cookieAuthManager) Check(c *gin.Context) error {
 	return nil
 }
 
-func (this *cookieAuthManager) User(c *gin.Context) interface{} {
+func (a *cookieAuthManager) User(c *gin.Context) interface{} {
 	// get model user
-	session, err := store.Get(c.Request, this.name)
+	session, err := store.Get(c.Request, a.name)
 	if err != nil {
 		log.Error(err)
 	}
 	return session.Values
 }
 
-func (this *cookieAuthManager) Login(c *gin.Context, user *model.User) interface{} {
-	// write this
-	session, err := store.Get(c.Request, this.name)
+func (a *cookieAuthManager) Login(c *gin.Context, user *mysql.User) (interface{}, error) {
+	// write a
+	session, err := store.Get(c.Request, a.name)
 	if err != nil {
-		return false
+		return false, err
 	}
 	session.Values["id"] = user.ID
 	if err := session.Save(c.Request, c.Writer); err != nil {
-		return false
+		return false, err
 	}
-	return true
+	return true, nil
 }
 
-func (this *cookieAuthManager) Logout(c *gin.Context) bool {
-	// del this
-	session, err := store.Get(c.Request, this.name)
+func (a *cookieAuthManager) Logout(c *gin.Context) bool {
+	// del a
+	session, err := store.Get(c.Request, a.name)
 	if err != nil {
 		return false
 	}

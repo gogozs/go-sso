@@ -6,21 +6,10 @@ import (
 )
 
 // 验证随机验证码
-func RandomCode() string {
+func RandomCode(n int) string {
 	rand.Seed(time.Now().UnixNano())
-	code := make([]byte, 6)
-	for i := 0; i < 6; i++ {
-		c := rand.Intn(10) + 48
-		code[i] = uint8(c)
-	}
-	return string(code)
-}
-
-// 验证随机验证码
-func RandomAuthCode() string {
-	rand.Seed(time.Now().UnixNano())
-	code := make([]byte, 12)
-	for i := 0; i < 6; i++ {
+	code := make([]byte, n)
+	for i := 0; i < n; i++ {
 		c := rand.Intn(10) + 48
 		code[i] = uint8(c)
 	}

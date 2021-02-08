@@ -5,7 +5,7 @@ import (
 	"github.com/casbin/casbin"
 	_ "github.com/go-sql-driver/mysql"
 	"go-sso/conf"
-	"go-sso/internal/repository/mysql/model"
+	"go-sso/internal/repository/storage/mysql"
 	"go-sso/pkg/log"
 	"path/filepath"
 )
@@ -25,7 +25,7 @@ func GetEnforcer() *casbin.Enforcer {
 
 //权限结构
 type CasbinModel struct {
-	model.BaseModel
+	mysql.BaseModel
 	Ptype    string `json:"p_type"`
 	RoleName string `json:"role_name"`
 	Path     string `json:"path"`

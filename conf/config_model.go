@@ -5,7 +5,7 @@ import "time"
 type Config struct {
 	MySQL     MySQLConfig
 	TestMysql MySQLConfig
-	Cache     CacheConfig
+	Redis     RedisConfig
 	Jwt       JwtConfig
 	Cookie    CookieConfig
 	Common    CommonConfig
@@ -26,8 +26,9 @@ type MySQLConfig struct {
 	Prefix   string
 }
 
-type CacheConfig struct {
+type RedisConfig struct {
 	Host        string
+	Port        int
 	Password    string
 	Dbname      int
 	MaxIdle     int

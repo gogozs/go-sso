@@ -2,7 +2,7 @@ package sms
 
 import "go-sso/conf"
 
-type Sms interface {
+type ISms interface {
 	Send(telephone string, templateName string, params ...string) error
 	SendBatch(telephoneArr []string, templateName string, params ...string) error
 }
@@ -12,19 +12,23 @@ const (
 	Sign  = "sign"
 )
 
-var sms Sms
+var sms ISms
 
 func InitSms(config *conf.Config) {
 	aliConfig := config.AliConfig
 	sms = NewAliyunSms(aliConfig.AccessKey, aliConfig.AccessSecret)
 }
 
-// 发送登录短信
-func SendLoginSms(telephone, code string) error {
-	return sms.Send(telephone, "login", code)
+func GetSms() ISms {
+	return sms
 }
 
-// 发送注册短信f
-func SendSignSms(telephone, code string) error {
-	return sms.Send(telephone, "sign", code)
+// 发送登录短信
+func SendLoginSms(s ISms, telephone, code string) error {
+	return s.Send(telephone, "login", code)
+}
+
+// 发送注册短信
+func SendSignSms(s ISms, telephone, code string) error {
+	return s.Send(telephone, "sign", code)
 }
