@@ -48,7 +48,7 @@ func StartServer() {
 	}()
 
 	// graceful quit
-	quit := make(chan os.Signal)
+	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
 	log.Info("Shutdown Server ...")
